@@ -20,19 +20,21 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
   @Input() header!: any;
   form!: FormGroup;
   choicesList: any[] = []
+  isVisibleModel = false;
   constructor(private parent: FormGroupDirective, public tableDataService:TableDataService) {}
   ngOnInit() {
     this.form = this.parent.form;
     if (this.form.get(this.keyItem)){
-      if (this.header.type == 'online_list') {
+      if (this.header?.type == 'online_list') {
         this.form.controls[this.keyItem].setValue(`${this.value.doc_id}`);
       }else{
         this.form.controls[this.keyItem].setValue(this.value);
       }
     }else {
-      if (this.value == undefined || this.header.type == 'list') {
+      if (this.value == undefined || this.header?.type == 'list' ||
+        this.header?.disabled) {
         this.form.addControl(this.keyItem, new FormControl({value: this.value, disabled: true}));
-      }if (this.header.type == 'online_list') {
+      }if (this.header?.type == 'online_list') {
         this.form.addControl(this.keyItem, new FormControl(`${this.value.doc_id}`));
       }else {
         this.form.addControl(this.keyItem, new FormControl(this.value));
@@ -41,7 +43,7 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
     this.getInnerTableData()
   }
   getInnerTableData(){
-    if (this.header.type == 'online_list'){
+    if (this.header?.type == 'online_list'){
       let body = {table:this.header.innerTableName}
       this.tableDataService.getData(body).subscribe(res=>{
         this.choicesList = res;
@@ -49,13 +51,13 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
     }
   }
   getChoicesList(){
-    if (this.header.type == "online_list"){
+    if (this.header?.type == "online_list"){
       return this.choicesList
     }
     return this.header.values
   }
   checkType(value:string){
-    return this.header.type == value
+    return this.header?.type == value
   }
   getTypeof =(value:any)=>typeof value
   ngAfterViewInit() {
@@ -64,5 +66,10 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
       this.inputElement.nativeElement.focus();
     }
   }
-
+  showModal(): void {
+    this.isVisibleModel = true;
+  }
+  handleCancel(): void {
+    this.isVisibleModel = false;
+  }
 }

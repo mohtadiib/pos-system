@@ -7,9 +7,8 @@ class DataSources{
     {
       title: "الرئيسية",
       router: "/dashboard",
-      path:"dashboard/:index",
+      path:"dashboard",
       icon:'home',
-      index:0,
       component: DashboardComponent,
       tableData: {
         router: { main:"/dashboard"},
@@ -28,13 +27,13 @@ class DataSources{
     {
       title: "الفئات",
       router: "/categories",
-      path:"categories/:index",
+      path:"categories",
       icon:'border-inner',
-      index:1,
       tableData: {
         router: { main:"/categories"},
         table:"categories",
         headers: [
+          { name: "الرقم", type: "", hidden: true },
           { name: "اسم الفئة", type: "" },
           { name: "الحالة", type: "tag", values:[{name:'نشط',value:'1'}, {name:'معلق',value:'0'}]},
         ],
@@ -48,9 +47,8 @@ class DataSources{
     {
       title: "المنتجات",
       router: "/products",
-      path:"products/:index",
+      path:"products",
       icon:'compress',
-      index:2,
       tableData: {
         router: { main:"/products"},
         table:"products",
@@ -59,6 +57,7 @@ class DataSources{
           foreignFields: [ { field: "category_id", table:"categories" }],
         },
         headers: [
+          { name: "الرقم", type: "", hidden: true },
           { name: "المنتج", type: "" },
           { name: "الفئة", type: "online_list", innerTableName: "categories" },
           { name: "السعر", type: "" },
@@ -78,10 +77,9 @@ class DataSources{
     {
       title: "POS",
       router: "/pos",
-      path:"pos/:index",
+      path:"pos",
       icon:'up-circle',
       component: PosComponent,
-      index: 3,
       tableData: {
         table: "products",
         customApiBody:{
@@ -109,29 +107,35 @@ class DataSources{
     {
       title: "ادارة المبيعات",
       router: "/sales",
-      path:"sales/:index",
+      path:"sales",
       icon:'shopping-cart',
-      index: 4,
       tableData:{
         router: { main:"/sales"},
         customApiBody:{
           table:"sales",
-          foreignFields:[{field:"employee_id",table:"users"}],
-          inner_tables:{foreignField:"invoice",tables:["sales_order"]},
-          where: {field:"returned",value:"0"}
+          foreignFields:[
+            {field:"client_id",table:"users"},
+            {field:"user_id",table:"users"}
+          ],
+          inner_tables:{foreignField:"doc_id",tables:["sales_items"]},
+          // where: {field:"returned",value:"0"}
         },
         customCrud:['return'],
         headers: [
-          { name: "رقم الفاتورة", type: "" },
+          { name: "الرقم", type: "", hidden: true },
+          { name: "العميل", type: "online_list" },
           { name: "الموظف", type: "online_list" },
           { name: "الاجمالي", type: "" },
+          { name: "التخفيض", type: "" },
+          { name: "الدفع", type: "fill_tag", values:[{name:'بنكك',value:'0',color:""}, {name:'كاش',value:'1',color:""}] },
+          { name: "الحالة", type: "fill_tag", values:[{name:'لم يتم',value:'0',color:""}, {name:'تم',value:'1',color:""}] },
           { name: "الاصناف", type: "list",
             innerModel: {
               title: "الاصناف",
-              router: { main:"/sales_order"},
+              router: { main:"/sales_items"},
               customApiBody:{
-                table:"sales_order",
-                foreignKey: {invoice:""},
+                table:"sales_items",
+                foreignKey: {sale_id:""},
                 foreignFields: [{field:"product_id",table:"products"}],
               },
               customCrud:[],
@@ -142,54 +146,94 @@ class DataSources{
               model:{
                 doc_id: '',
                 product_id: '',
-                qty: '',
+                quantity: '',
               }
             }
           },
-          { name: "الدفع", type: "fill_tag", values:[{name:'بنكك',value:'0',color:""}, {name:'كاش',value:'1',color:""}] },
         ],
         model:{
           doc_id: '',
-          invoice: '',
-          employee_id: '',
-          full_total_price: '',
-          sales_order: undefined,
+          client_id: '',
+          user_id: '',
+          total: '',
+          discount: '',
           pay_type: '0',
+          status: '0',
+          sales_items: undefined,
         }
       }
     },
     {
-      title: "المستخدمين",
-      router: "/users",
-      path:"users/:index",
-      icon:'usergroup-add',
-      index: 5,
+      title: "الصلاحيات",
+      icon:"block",
+      router: "/departments",
+      path:"departments",
       tableData: {
-        router: { main:"/users"},
-        table: "users",
+        router: { main:"/departments"},
+        table:"departments",
         headers: [
+          { name: "الرقم", type: "", hidden: true },
           { name: "الاسم", type: "" },
-          { name: "رقم الهاتف", type: "" },
-          { name: "كلمةالمرور", type: "" },
+          { name: "الصلاحية", type: "tags_list",
+            values:[
+              {name:'مبيعات',value:'0',color:'#1388c7'},
+              {name:'مدير',value:'1',color:'#deae47'},
+              {name:'مبيعات',value:'2',color:'#39c23e'},
+            ]
+          },
+          { name: "الحالة", type: "tag", values:[{name:'معلق',value:'0'}, {name:'نشط',value:'1'}]},
         ],
         model:{
           doc_id: '',
           name: '',
-          phone: '',
-          password: '',
+          type: '',
+          active: '1',
         }
-      }
+      },
+    },
+    {
+      title: "المستخدمين",
+      icon:"block",
+      router: "/users",
+      path:"users",
+      tableData: {
+        router: { main:"/users"},
+        customApiBody:{
+          table:"users",
+          foreignFields:[
+            {field:"department_id",table:"departments"},
+          ],
+          // withAdmin:true
+        },
+        headers: [
+          { name: "الرقم", type: "", hidden: true },
+          { name: "القسم", type: "online_list", innerTableName: "departments" },
+          { name: "الإسم", type: "" },
+          { name: "اسم المستخدم", type: "" },
+          { name: "كلمة المرور", type: "" },
+          { name: "الحالة", type: "tag", values:[{name:'معلق',value:'0'}, {name:'نشط',value:'1'}]},
+        ],
+        model:{
+          doc_id: '',
+          department_id: '',
+          name: '',
+          username: '',
+          password: '',
+          active: '1',
+        }
+      },
+      permissions:[1]
     },
     {
       title: "بنود الصرف",
       router: "/items",
-      path:"items/:index",
+      path:"items",
       icon:'rotate-right',
-      index:6,
       tableData: {
         router: { main:"/items"},
         table:"items",
         headers: [
+          { name: "الرقم", type: "", hidden: true },
           { name: "اسم البند", type: "" },
           { name: "الحالة", type: "tag", values:[{name:'معلق',value:'0'}, {name:'نشط',value:'1'}]},
         ],
@@ -203,9 +247,8 @@ class DataSources{
     {
       title: "المنصرفات",
       router: "/outputs",
-      path:"outputs/:index",
+      path:"outputs",
       icon:'switcher',
-      index:7,
       tableData: {
         router: { main:"/outputs"},
         table:"outputs",
@@ -214,10 +257,10 @@ class DataSources{
           foreignFields:[{field:"item_id",table:"items"},{field:"employee_id",table:"users"}],
         },
         headers: [
+          { name: "الرقم", type: "", hidden: true },
           { name: "البند", type: "online_list", innerTableName: "items" },
           { name: "التكلفة", type: "" },
           { name: "الزمن", type: "" },
-          { name: "الموظف", type: "online_list", innerTableName: "users" },
           { name: "الحالة", type: "tag", values:[{name:'معلق',value:'0'}, {name:'نشط',value:'1'}]},
         ],
         model:{
@@ -225,22 +268,61 @@ class DataSources{
           item_id: '',
           moneyValue: '',
           timestamp: undefined,
-          employee_id: undefined,
           active: '1',
+        }
+      }
+    },
+    {
+      title: "الديون",
+      router: "/depts",
+      path:"depts",
+      icon:'switcher',
+      tableData: {
+        router: { main:"/depts"},
+        customApiBody:{
+          table:"depts",
+          foreignFields:[{field:"user_id",table:"users"},{field:"client_id",table:"users"}],
+        },
+        headers: [
+          { name: "الرقم", type: "", hidden: true },
+          { name: "الحالة", type: "tags_list",
+            values:[
+              {name:'غير مسدد',value:'0',color:'#a9a9a9'},
+              {name:'مسدد',value:'1',color:'#27a100'}
+            ]
+          },
+          { name: "المبلغ", type: "" },
+          { name: "رقم العملية", type: "", disabled: true },
+          { name: "الموظف", type: "online_list", innerTableName: "users", disabled: true },
+          { name: "العميل", type: "online_list", innerTableName: "users" },
+          { name: "الانشاء", type: "", disabled: true  },
+          { name: "التعديل", type: "", disabled: true  },
+        ],
+        model:{
+          doc_id: '',
+          debt_status: '',
+          many_value: '',
+
+          sale_id: '',
+          user_id: '',
+          client_id: '',
+
+          created_at: Date.now(),
+          updated_at: Date.now(),
         }
       }
     },
     {
       title: "التقارير",
       router: "/report",
-      path:"report/:index",
+      path:"report",
       icon:'snippets',
-      index:8,
       component: DashboardComponent,
       tableData: {
         router: { main:"/dashboard"},
         table:"dashboard",
         headers: [
+          { name: "الرقم", type: "", hidden: true },
           { name: "اسم الفئة", type: "" },
           { name: "الحالة", type: "", values:[{name:'نشط',value:'1'}, {name:'معلق',value:'0'}]},
         ],
@@ -250,81 +332,7 @@ class DataSources{
           active: '1',
         }
       }
-    },
-    // {
-    //   title: "الطلبات",
-    //   router: "/orders",
-    //   path:"orders/:index",
-    //   icon:'shopping-cart',
-    //   index: 0,
-    //   tableData:{
-    //     router: { main:"/orders"},
-    //     table:"orders",
-    //     // customApiBody:{
-    //     //   table:"orders",
-    //     //   foreignField:{foreignKeys: ["employee_id"]},
-    //     //   inner_tables:["employees"],
-    //     //   where: {field:"returned",value:"0"}
-    //     // },
-    //     customCrud:[''],
-    //     headers: [
-    //       { name: "تاريخ الحجز", type: "" },
-    //       { name: "نوع الحجز", type: "" },
-    //       { name: "جنسية العاملات", type: "" },
-    //       { name: "عدد الساعات", type: "" },
-    //       { name: "مواد النظافة", type: "tag", values:[{name:'لا يحتاج',value:'0'}, {name:'يحتاج',value:'1'}] },
-    //       { name: "عدد العاملات", type: "" },
-    //       { name: "اسم العميل", type: "" },
-    //       { name: "رقم الهاتف", type: "" },
-    //       { name: "المدينة", type: "" },
-    //       { name: "العنوان", type: "" },
-    //     ],
-    //     model:{
-    //       doc_id: '',
-    //       booked_date: '',
-    //       service_type: '',
-    //       worker_nation: '',
-    //       hour_count: '',
-    //       cleaning_tools: '',
-    //       workers_count: '',
-    //       username: '',
-    //       userphone: '',
-    //       address: '',
-    //     }
-    //   }
-    // },
-    // {
-    //   title: "الشكاوي",
-    //   router: "/shaqawi",
-    //   path:"shaqawi/:index",
-    //   icon:'exclamation',
-    //   index: 1,
-    //   tableData:{
-    //     router: { main:"/orders"},
-    //     table:"shaqawi",
-    //     // customApiBody:{
-    //     //   table:"orders",
-    //     //   foreignField:{foreignKeys: ["employee_id"]},
-    //     //   inner_tables:["employees"],
-    //     //   where: {field:"returned",value:"0"}
-    //     // },
-    //     customCrud:[''],
-    //     headers: [
-    //       { name: "اسم العميل", type: "" },
-    //       { name: "رقم الهاتف", type: "" },
-    //       { name: "العنوان", type: "" },
-    //       { name: "الاستفسار", type: "" },
-    //     ],
-    //     model:{
-    //       doc_id: '',
-    //       name: '',
-    //       phone: '',
-    //       subject: '',
-    //       message: '',
-    //     }
-    //   }
-    // },
-
+    }
   ]
 }
 

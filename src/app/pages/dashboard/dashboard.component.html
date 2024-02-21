@@ -1,46 +1,34 @@
+<div class="row mb-5">
+  <img class="logo" src="assets/img/logo.png">
+  <div class="mr-20">
+    <h2>نظام مبيعات</h2>
+    <h1 class="mt-1">نظام ادارة المخازن والمبيعات</h1>
+  </div>
+  <h2 class="p-color pt-12 mr-10"> - مرحباً {{authService.department.user}}</h2>
+</div>
 <div class="cards">
-  <div class="card">
+  <!--  <div-->
+  <!--    style="background-color: #ecf6dd;color: #1f8f27;border: 1px white solid"-->
+  <!--    class="card">-->
+  <!--    <div>-->
+  <!--      <div>-->
+  <!--        {{totals.operations}}-->
+  <!--      </div>-->
+  <!--      <div>-->
+  <!--        عدد الايصالات-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--    <span nz-icon nzType="car"></span>-->
+  <!--  </div>-->
+  <div class="card" *ngFor="let table of tables.values; let i = index">
     <div>
       <div>
-        {{totals.products}}
+        {{table}}
       </div>
       <div>
-        عدد الاصناف
+        {{tables.titles[i]}}
       </div>
     </div>
-    <span nz-icon nzType="compress"></span>
-  </div>
-  <div class="card">
-    <div>
-      <div>
-        {{totals.sales.total}}
-      </div>
-      <div>
-        اجمالي المبيعات
-      </div>
-    </div>
-    <span nz-icon nzType="shopping-cart"></span>
-  </div>
-  <div class="card">
-    <div>
-      <div>
-        {{totals.outputs.total ?? 0}}
-      </div>
-      <div>
-        اجمالي المنصرفات
-      </div>
-    </div>
-    <span nz-icon nzType="switcher"></span>
-  </div>
-  <div *ngIf="!reportPage" (click)="showConfirm()" class="card">
-    <div>
-      <div>
-        اغلاق الوردية
-      </div>
-      <div>
-        سيتم تخزين هذا السجل في نافذة الايرادات
-      </div>
-    </div>
-    <span nz-icon nzType="logout"></span>
+    <span nz-icon [nzType]="tables.icons![i]"></span>
   </div>
 </div>

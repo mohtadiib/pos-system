@@ -110,29 +110,27 @@ export class PosComponent implements OnInit{
     let total = this.getTotalPrice() -  this.discount
     let body: any = {
       doc_id: `${Date.now()}`,
-      user_id: "123",
-      quantity_items: this.getItemsCount(),
-      total_price: total,
-      full_total_price: this.getTotalPrice(),
-      employee_id: this.authService.getToken(),
-      invoice: this.receiptNo,
+      client_id: "123",
+      total: total,
+      discount: this.discount,
+      user_id: this.authService.getToken(),
       pay_type: "1",
-      company_id: "123",
+      // company_id: "123",
     }
     let innerItemData:any[] = []
     this.cart.forEach(value => {
       innerItemData.push(
         {
           product_id:value.docId,
-          qty:value.qty,
-          invoice: body.doc_id
+          quantity:value.qty,
+          sale_id: body.doc_id
         }
       )
     })
-    body.innerItem = {table:"sales_order",data: innerItemData };
+    body.innerItem = {table:"sales_items",data: innerItemData };
     // console.log(body)
     this.dataService.saveData(
-      'sales'!,
+      'sales',
       true,
       body,
       true

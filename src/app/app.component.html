@@ -3,23 +3,23 @@
     <div class="sidebar-logo">
       <a href="https://ng.ant.design/" target="_blank">
 <!--        <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo">-->
-        <h1>Alaman Cpanel</h1>
+        <h1>Sales System</h1>
       </a>
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline">
       <li (click)="checkRoute()" *ngFor="let siteItem of sideBarList" nz-menu-item>
         <span nz-icon [nzType]="siteItem.icon"></span>
         <span [className]="siteItem.title == 'POS'?'en-font':''">{{siteItem.title}}</span>
-        <a [routerLink]="siteItem.router+'/'+siteItem.index"></a>
+        <a [routerLink]="siteItem.router"></a>
       </li>
     </ul>
     <button (click)="authService.logout()" nz-button nzType="text" nzDanger>
       <span nz-icon nzType="logout"></span>
-      <span *ngIf="getRoute() != '/pos/3'">تسجل خروج</span>
+      <span *ngIf="getRoute() != '/pos'">تسجل خروج</span>
     </button>
   </nz-sider>
   <nz-layout>
-    <nz-header *ngIf="getRoute() != '/pos/3' && !logged()">
+    <nz-header *ngIf="getRoute() != '/pos' && !logged()">
       <div class="app-header">
         <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
             <span class="trigger"
@@ -27,10 +27,17 @@
                [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
             ></span>
         </span>
+        <span class="header-trigger left-0">
+          <span style="font-size: 12px;font-weight: bold"
+                class="trigger user-header">
+            {{authService.department.name}} /
+            {{authService.department.user}}
+          </span>
+        </span>
       </div>
     </nz-header>
     <nz-content>
-      <div [class]="getRoute() == '/pos/3'?'inner-content-pos':'inner-content'">
+      <div [class]="getRoute() == '/pos'?'inner-content-pos':'inner-content'">
          <router-outlet></router-outlet>
       </div>
     </nz-content>

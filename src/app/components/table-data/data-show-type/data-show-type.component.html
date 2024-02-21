@@ -1,32 +1,34 @@
-<button  *ngIf="header!.type == 'list'" (click)="showModal()" nz-button nzType="default">
+<button *ngIf="header?.type == 'list'" (click)="showModal()" nz-button nzType="default">
   <span nz-icon nzType="eye"></span>
   {{value}}
 </button>
 <!--Normal View-->
-<div [style]="{color: value?'':'darkgrey'}"
-     *ngIf="header!.type == ''">
+<div *ngIf="header?.type == ''" [style]="{color: value?'':'darkgrey'}" >
   {{value?value:'لم يحدد'}}
 </div>
 <!--Online List-->
-<div [style]="{color: value?'':'darkgrey'}"
-     *ngIf="header!.type== 'online_list'">
-  {{value?value.name:'لم يحدد'}}
+<div *ngIf="header?.type == 'online_list'" [style]="{color: value?'':'darkgrey'}">
+  {{value? header.sub?.table? value[header.sub.table].name:value.name:'لم يحدد'}}
 </div>
 <!--Status-->
-<nz-tag *ngIf="header!.type == 'tag'" [nzColor]="value == '1'?
+<nz-tag *ngIf="header?.type == 'tag'" [nzColor]="value == '1'?
 'green':'red'">
-  {{header!.values[+value].name}}
+  {{header!.values[+value]?.name}}
 </nz-tag>
 <!--Gender-->
-<nz-tag *ngIf="header!.type == 'fill_tag'"
+<nz-tag *ngIf="header?.type == 'fill_tag'"
         [nzColor]="value == '1'?'#108ee9':'rgba(255,128,0,0.59)'"
->{{header!.values[+value].name}}
+>{{header!.values[+value]?.name}}
 </nz-tag>
-<img  *ngIf="header!.type == 'image_view'" src="../assets/img/{{value}}" alt="{{value}}" width="50" height="50">
+<nz-tag *ngIf="header?.type == 'tags_list'"
+        [nzColor]="header!.values[+value]?.color"
+>{{header!.values[+value]?.name}}
+</nz-tag>
+<img  *ngIf="header?.type == 'image_view'" src="../assets/img/{{value}}" alt="{{value}}" width="50" height="50">
 
 
 
-<div *ngIf="header.type == 'list' && isVisible" >
+<div *ngIf="header?.type == 'list' && isVisible" >
   <nz-modal
     [nzStyle]="{width: '80%'}"
     [(nzVisible)]="isVisible"

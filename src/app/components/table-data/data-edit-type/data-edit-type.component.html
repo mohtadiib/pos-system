@@ -1,24 +1,36 @@
-<div>
-    <input #input *ngIf="header.type == '' || header.type == 'image_view'"
-           [placeholder]="value == undefined?0:''"
-           [formControlName] = "keyItem"
-           type="text" nzSize="large" nz-input
-    />
-   <input *ngIf="header.type == 'list'"
-           [placeholder]="value == undefined?0:''"
-           type="text" nzSize="large" nz-input
-           [formControlName] = "keyItem"
-    />
-          <nz-select
-              *ngIf="header.type == 'tag' || header.type == 'fill_tag' || header.type == 'online_list'"
-              nzSize="large"
-              [formControlName] = "keyItem"
-            >
-<!--                       nzValue="{{this.header.type == 'online_list'?item.doc_id:item.value}}"-->
-            <nz-option *ngFor="let item of getChoicesList()"
-                       nzValue="{{this.header.type == 'online_list'?item.doc_id:item.value}}"
-                       nzLabel="{{item.name}}"
-            ></nz-option>
-          </nz-select>
-</div>
+<button style="background-color: #fffff0" *ngIf="header?.type == 'image_view'" (click)="showModal()" nz-button nzType="default">
+  <span nz-icon nzType="edit"></span>
+  حدد صورة
+</button>
+<input #input [hidden]="header.hidden" *ngIf="header?.type == '' || header?.type == 'list'"
+       [placeholder]="value == undefined?0:''"
+       type="text" nz-input
+       [formControlName] = "keyItem"
+/>
+<nz-select
+  *ngIf="header?.type == 'tag' || header?.type == 'fill_tag' || header?.type == 'online_list' || header?.type == 'tags_list'"
+  [formControlName] = "keyItem"
+>
+<!--                       nzValue="{{this.header?.type == 'online_list'?item.doc_id:item.value}}"-->
+<nz-option *ngFor="let item of getChoicesList()"
+           nzValue="{{this.header?.type == 'online_list'?item.doc_id:item.value}}"
+           nzLabel="{{item.name}}"
+></nz-option>
+</nz-select>
 
+
+
+
+<div *ngIf="header?.type == 'image_view' && isVisibleModel" >
+  <nz-modal
+    [nzStyle]="{width: '80%'}"
+    [(nzVisible)]="isVisibleModel"
+    nzTitle="اختر صورة"
+    [nzFooter]="null"
+    (nzOnCancel)="handleCancel()"
+  >
+    <ng-container *nzModalContent>
+
+    </ng-container>
+  </nz-modal>
+</div>

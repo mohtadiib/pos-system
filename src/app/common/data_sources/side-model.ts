@@ -1,4 +1,3 @@
-import {Component} from "@angular/core";
 
 export interface SideModel {
   title: string;
@@ -17,7 +16,7 @@ export interface SubMenuModel {
 
 export interface TableData {
   title?:        string;
-  router?:      {main:string,second?:string,docId?:string};
+  router?:      {main:string,second?:string,editRoute?:string,docId?:string};
   index?:number
   table?:  string;
   foreignField?:  string;
@@ -26,5 +25,8 @@ export interface TableData {
   customHeaders?:any
   headers?:any[];
   model?:any
+  modelAddType?:boolean
+  customAddButton?:any
+  actionButtons?:any
 }
 

@@ -1,13 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {PagesComponent} from "./pages/pages/pages.component";
-import {SideModel} from "./common/data_sources/side-model";
 import DataSources from "./common/data_sources/data-sources";
 import {AuthComponent} from "./pages/auth/auth.component";
 import {AuthGuard} from "./services/auth.guard";
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: `${new DataSources().pagesDataTable[0].router}/0` /*'/courses/0'*/ },
+  { path: '', pathMatch: 'full', redirectTo: `${new DataSources().pagesDataTable[0].router}` /*'/courses/0'*/ },
   { path: 'login', component: AuthComponent },
 ];
 

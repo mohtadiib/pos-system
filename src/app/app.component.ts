@@ -20,7 +20,7 @@ export class AppComponent {
   checkRoute(){
     console.log(this.router.url)
     switch (this.router.url) {
-      case "/pos/3":
+      case "/pos":
         this.isCollapsed = true;
         break;
       default:

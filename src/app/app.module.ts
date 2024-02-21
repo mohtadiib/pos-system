@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { ar_EG } from 'ng-zorro-antd/i18n';
-import { registerLocaleData } from '@angular/common';
+import {NgOptimizedImage, registerLocaleData} from '@angular/common';
 import ar from '@angular/common/locales/ar';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -25,6 +25,7 @@ import { AuthComponent } from './pages/auth/auth.component';
 import {NzFormModule} from "ng-zorro-antd/form";
 import {NzCheckboxModule} from "ng-zorro-antd/checkbox";
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import {NzMessageService} from "ng-zorro-antd/message";
 
 registerLocaleData(ar);
 
@@ -55,9 +56,11 @@ registerLocaleData(ar);
     ReactiveFormsModule,
     NzFormModule,
     NzCheckboxModule,
+    NgOptimizedImage,
   ],
     providers: [
-        {provide: NZ_I18N, useValue: ar_EG}
+        {provide: NZ_I18N, useValue: ar_EG},
+        NzMessageService,
     ],
     exports: [],
     bootstrap: [AppComponent]

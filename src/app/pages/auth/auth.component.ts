@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
   selector: 'app-auth',
@@ -10,21 +11,30 @@ import {Router} from "@angular/router";
 })
 export class AuthComponent implements OnInit{
   validateForm!: UntypedFormGroup;
+  loading:boolean = false
   constructor(
+    private message: NzMessageService,
     private fb: UntypedFormBuilder,
     public authService:AuthService,
     private router: Router
   ) {}
+  //message
+  createMessage(type: string,message:string = "تمت العملية بنجاح"): void {
+    this.message.create(type, message);
+  }
 
   submitForm(): void {
+    console.log(this.validateForm.value)
     if (this.validateForm.valid) {
-      console.log(this.validateForm.value);
+      this.loading = true
       this.authService.login(this.validateForm.value).subscribe((value:any) => {
-        console.log(value)
+        this.loading = false
         if (value.msg == "success"){
-          this.authService.setToken(value.user.doc_id)
-          console.log(this.authService.getToken())
+          this.authService.setToken(value.session)
+          this.authService.sidePushing(value.session)
           this.router.navigate(['/']);
+        }else {
+          this.createMessage("error","خطأ في تسجيل الدخول")
         }
       })
     } else {
@@ -38,7 +48,7 @@ export class AuthComponent implements OnInit{
   }
   ngOnInit(): void {
     this.validateForm = this.fb.group({
-      phone: [null, [Validators.required]],
+      username: [null, [Validators.required]],
       password: [null, [Validators.required]],
     });
   }

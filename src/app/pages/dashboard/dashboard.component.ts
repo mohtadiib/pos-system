@@ -12,22 +12,16 @@ import {Router} from "@angular/router";
 })
 export class DashboardComponent implements OnInit{
   body:any = {
-    foreignKey:{
-      employee_id: this.authService.getToken()
-    },
     dashboard:[
-      {table:"sales",field:"total_price",user:true},
+      {table:"operations",department:true},
+      {table:"operations",foreignKey:{operation_status:"4"},department: true},
       {table:"products"},
-      {table:"categories"},
-      {table:"outputs",field:"manyValue",user:true},
     ]
   }
-  totals:any = {
-    sales: { count:0, total:0 },
-    outputs: { count:0, total:0 },
-    products: 0,
-    categories: 0,
-    role:""
+  tables:any = {
+    values:[],
+    titles:["عدد الايصالات","الايصالات المكتملة","عدد الاصناف في المخزن"],
+    icons:["file-text","file-done","pic-center"]
   }
   reportPage:boolean = this.router.url === '/report/8'
   constructor(private dataService:TableDataService,
@@ -36,21 +30,14 @@ export class DashboardComponent implements OnInit{
               private router: Router) {}
   getData(){
     this.dataService.getData(this.body).subscribe((value:any) => {
-      this.authService.isAdmin = this.getRole(value.role)
-      this.totals = value
+      console.log(value)
+      this.tables.values = value.tables
     })
   }
   getRole = (value:string) => value === '1'
   // reportPage = () => this.router.url == '/report/8'
   ngOnInit(): void {
     this.getData()
-  }
-  showConfirm(): void {
-    this.modal.confirm({
-      nzTitle: '<i>اغلاق الوردية؟</i>',
-      nzContent: '<b>يستم اغلاق الوردية واضافة سجل اجمالي في نافذة الايرادات</b>',
-      nzOnOk: () => console.log('OK'),
-    });
   }
 
 }
