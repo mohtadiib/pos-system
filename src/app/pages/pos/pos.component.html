@@ -61,11 +61,13 @@
                   title="{{product.name}}"
                   (click)="addToCart(product)"
                 >
-                  <img class="img-item" src="../assets/img/{{product.product_image}}" alt="{{product.name}}">
-                  <div class="flex pb-3 px-3 text-sm -mt-3">
+                  <img class="img-item" src="{{imagesGridService.imageUrl+product.product_image}}" alt="{{product.name}}">
+                  <p class="center" [textContent]="product.size+' متر '"></p>
+                  <div class="flex pb-3 px-3 text-sm mt-1">
                     <p class="flex-grow truncate mr-1" [textContent]="product.name"></p>
                     <p class="nowrap font-semibold" [textContent]="priceFormat(product.price)"></p>
                   </div>
+<!--                  {{product.quantity}}-->
                 </div>
               </div>
             </div>
@@ -77,6 +79,21 @@
       <!-- right sidebar -->
       <div class="w-5/12 flex flex-col bg-blue-gray-50 h-full pr-4 pl-2 py-4">
         <div class="border-right rounded-3xl flex flex-col h-full">
+          <div
+            class="flex font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
+          >
+            <div class="text-blue-gray-200 pt-1">العميل</div>
+            <div class="mr-52 w-full">
+              <nz-select
+                [(ngModel)]="saleArgs.clientId"
+              >
+                <nz-option *ngFor="let user of users"
+                           nzValue="{{user.doc_id}}"
+                           nzLabel="{{user.name}}"
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div>
           <!-- empty cart -->
           <div *ngIf="cart.length === 0" class="flex-1 w-full p-4 opacity-25 select-none flex flex-col flex-wrap content-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-16 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,19 +127,19 @@
             <div class="flex-1 w-full px-4 overflow-auto">
               <div *ngFor="let item of cart">
                 <div class="select-none mb-3 bottom-border rounded-lg w-full text-blue-gray-700 py-2 px-2 flex justify-center">
-                  <img src="../assets/img/{{item.image}}" alt="" class="rounded-lg h-10 w-10 bg-white shadow ml-2">
+                  <img src="{{imagesGridService.imageUrl+item.image}}" alt="" class="rounded-lg h-10 w-10 bg-white shadow ml-2">
                   <div class="flex-grow">
                     <h5 class="text-sm" >{{item.name}}</h5>
                     <p class="text-xs block" >{{priceFormat(item.price)}}</p>
                   </div>
                   <div class="py-1">
-                    <div class="w-28 grid grid-cols-3 gap-2 ml-2">
+                    <div class="w-40 grid grid-cols-3 gap-2 ml-2">
                       <button (click)="addQty(item, -1)" class="rounded-lg text-center py-1 text-white bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
                         </svg>
                       </button>
-                      <input value="{{item.qty}}" type="text" class="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm">
+                      <input (keyup)="quantityChange(item,$event)" value="{{item.qty}}" type="text" class="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm">
                       <button (click)="addQty(item, 1)" class="rounded-lg text-center py-1 text-white bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -139,7 +156,7 @@
           <!-- payment info -->
           <div class="select-none h-auto w-full text-center pt-3 pb-4 px-4">
             <div
-              class="flex mb-3 font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
+              class="flex font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
             >
               <div class="text-blue-gray-200">الاجمالي</div>
               <div
@@ -148,7 +165,7 @@
               </div>
             </div>
             <div
-              class="flex mb-3 font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
+              class="flex font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
             >
               <div class="text-blue-gray-200">خصم</div>
               <div class="text-left mr-52 flex text-blue-gray-700">
@@ -157,7 +174,28 @@
               </div>
             </div>
             <div
-              class="flex mb-3 font-semibold bg-cyan-50 text-blue-gray-700 rounded-lg py-2 px-3"
+              class="flex font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
+            >
+              <div class="text-blue-gray-200">خصم</div>
+              <div class="mr-52 w-full">
+                <nz-select
+                  [(ngModel)]="saleArgs.paymentType"
+                >
+                  <!--                       nzValue="{{this.header?.type == 'online_list'?item.doc_id:item.value}}"-->
+                  <nz-option nzValue="0"
+                             nzLabel="كاش"
+                  ></nz-option>
+                  <nz-option nzValue="1"
+                             nzLabel="بنكك"
+                  ></nz-option>
+                  <nz-option nzValue="2"
+                             nzLabel="دين"
+                  ></nz-option>
+                </nz-select>
+              </div>
+            </div>
+            <div
+              class="flex font-semibold bg-cyan-50 text-blue-gray-700 rounded-lg py-2 px-3"
             >
               <div class="text-cyan-200">المدفوع</div>
               <div

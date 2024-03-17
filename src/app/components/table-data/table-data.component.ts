@@ -15,18 +15,34 @@ export class TableDataComponent implements OnInit, OnChanges{
   index:number = 0
   @Input() inputTableData!: TableData;
   @Input() foreignId!: string;
+  @Input() pageTitle!: string;
   tableData!:TableData
   editCache: { [key: string]: { edit: boolean; data: any } } = {};
   listOfData: any[] = [];
   keysEditModel: any[] = [];
   editingObject: { recordId: string, adding: boolean } = { recordId: "",adding: false };
   tableLoading: boolean = false
+  categoryPrice: number = 0
   constructor(
     public tableApiService:TableDataService,
     public router:Router,
-    private authService:AuthService) {
+    public authService:AuthService) {
   }
   // modelData = () => this.tableData2[this.index];
+  receiveMessage($event:any){
+    this.storeData($event,()=> {
+      // this.editCache[doc_id].edit = false;
+    })
+  }
+  //set general price from size field to price field
+  receiveSize($event:any){
+    if ($event){
+      this.categoryPrice = $event
+    }
+    // @ts-ignore
+    let size = +this.form.value.size?+this.form.value.size:1
+    this.form.setValue({...this.form.value,price: this.categoryPrice * size })
+  }
   ngOnInit(): void {
     // this.getData()
   }
@@ -105,34 +121,27 @@ export class TableDataComponent implements OnInit, OnChanges{
   }
   //Check Editing for change add button
   checkEditing = () => this.editingObject.recordId || this.editingObject.adding
-
-
   //model
   isVisible = false;
   showModal(add:boolean = true): void {
     this.editingObject.adding = add
     this.isVisible = true;
   }
-
   handleOk(): void {
     this.submitForm()
     this.isVisible = false;
     this.editingObject.adding = false;
   }
-
   handleCancel(): void {
     console.log('Button cancel clicked!');
     this.isVisible = false;
     this.editingObject.adding = false;
   }
-
   submitForm(): void {
     // console.log('submit', this.form.value);
     const data = this.form.value
     this.storeData(data,()=> {})
   }
-
-
   //Api Functions *****************************
   public getData(){
     this.tableLoading = true
@@ -140,10 +149,11 @@ export class TableDataComponent implements OnInit, OnChanges{
     this.listOfData = []
     this.keysEditModel = Object.keys(this.tableData.model);
     //Delete doc_id
-    // this.keysEditModel.splice(0,1)
+    this.keysEditModel.slice()
     let body = this.checkCustomApi(false)
     // console.log(JSON.stringify(body))
-    this.tableApiService.getData(body).subscribe(res=>{
+    this.tableApiService.getData(body).subscribe(res=> {
+      // console.log(res)
       this.listOfData = res;
       this.updateEditCache();
       this.tableLoading = false
@@ -165,7 +175,7 @@ export class TableDataComponent implements OnInit, OnChanges{
       body!,
       this.editingObject.adding,
       data
-    ).subscribe((res:any)=>{
+    ).subscribe((res:any)=> {
       console.log(res)
       if (res.msg == true){
         this.tableApiService.createMessage('success',`تمت العملية بنجاح`)
@@ -177,6 +187,8 @@ export class TableDataComponent implements OnInit, OnChanges{
       }else {
         if (res.msg == "Session Error"){
           this.tableApiService.createMessage('error',"خطا في الجلسة، قم باعادة تسجيل الدخول")
+        }else {
+          this.tableApiService.createMessage('error',res?.content)
         }
       }
       //close focusing input
@@ -192,15 +204,25 @@ export class TableDataComponent implements OnInit, OnChanges{
       console.log(res)
     })
   }
-
+  cancelRow(data: any): void {
+    let tempData = {doc_id:data.doc_id,status: 2}
+    this.storeData(tempData,()=> {
+      // this.editCache[doc_id].edit = false;
+    })
+  }
   routeTo(path:string) {
     this.router.navigate([path]);
   }
-  checkActionButtons = (data:any) => !this.tableData.actionButtons ||
-      data[this.tableData!.actionButtons!.edit.key] == this.tableData!.actionButtons!.edit.value
+  // Check if table content action buttons of delete and update and more button
+  checkActionButtons = (value:string,custom: boolean = false) => custom?null:!this.tableData?.customCrud || this.tableData.customCrud?.includes(value)
+  showAddButton = () => !this.tableData?.customCrud || this.tableData?.customCrud && this.tableData!.customCrud?.includes('add')
+  checkIfAddButton = () => !this.tableData?.customCrud
+    || this.tableData?.customCrud!.length && !this.tableData!.customCrud?.includes('add')
+    || this.tableData?.customCrud!.length == 1 && this.tableData!.customCrud?.includes('add')
+    || this.tableData?.customCrud!.length && this.tableData!.customCrud?.includes('add')
 
-  showAddButton = () => this.tableData.actionButtons?.add !== false ||
-    this.tableData.actionButtons?.add === false && this.authService.isDepartment() && this.operationRoute()
-  operationRoute = () => this.tableData.router?.main === "/operations"
+
+  // get price from general config app
+  getCustomValue = (data:any,keyItem:string,i:number) => this.tableData.headers![i]?.generalPrice? +this.authService.appConfig.price * +this.editCache[data.doc_id!].data?.size  :this.editCache[data.doc_id!].data[keyItem]
 }
 

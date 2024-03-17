@@ -3,7 +3,7 @@
   {{value}}
 </button>
 <!--Normal View-->
-<div *ngIf="header?.type == ''" [style]="{color: value?'':'darkgrey'}" >
+<div (click)="showModalCompleteModal()" *ngIf="header?.type == ''" [style]="{color: value?'':'darkgrey',cursor: header?.completeModel?'pointer':''}" >
   {{value?value:'لم يحدد'}}
 </div>
 <!--Online List-->
@@ -24,21 +24,39 @@
         [nzColor]="header!.values[+value]?.color"
 >{{header!.values[+value]?.name}}
 </nz-tag>
-<img  *ngIf="header?.type == 'image_view'" src="../assets/img/{{value}}" alt="{{value}}" width="50" height="50">
 
+<div [style]="'color: '+header!.values[+value]?.color" class="row" *ngIf="header?.type == 'icons_list'">
+  <span nz-icon [nzType]="header!.values[+value]?.icon"
+        [style]="'margin-right:12px;'"></span>
+  <div [style]="'margin-right:5px;'">{{header!.values[+value]?.name}}</div>
+</div>
 
-
-<div *ngIf="header?.type == 'list' && isVisible" >
+<img  *ngIf="header?.type == 'image_view'" src="{{imagesGridService.imageUrl+value}}" alt="{{value}}" width="50" height="50">
+<div *ngIf="header?.type == 'list'" >
   <nz-modal
     [nzStyle]="{width: '80%'}"
     [(nzVisible)]="isVisible"
-    nzTitle="{{record.name}} > {{header.innerModel.title}}"
+    nzTitle="{{record.name}} > {{header.innerModel?.title}}"
     [nzFooter]="null"
     (nzOnCancel)="handleCancel()"
   >
     <ng-container *nzModalContent>
       <app-table-data [inputTableData]="header.innerModel" [foreignId]="record.doc_id" />
-<!--      <app-table-data [foreignId]="record.doc_id" />-->
+    </ng-container>
+  </nz-modal>
+</div>
+<!--complete operation-->
+<div *ngIf="header?.completeModel" >
+  <nz-modal
+    [nzStyle]="{width: '30%'}"
+    [(nzVisible)]="isVisibleCompleteModal"
+    nzTitle="{{header?.completeModel.title}}"
+    (nzOnCancel)="handleCancelCompleteModal()"
+    (nzOnOk)="onOk()"
+  >
+    <ng-container *nzModalContent>
+      المبلغ المستحق هو {{value}}
+      <input (keyup)="changePayed()" #input [(ngModel)]="payed" [placeholder]="header?.completeModel?.placeholder" type="number" nz-input />
     </ng-container>
   </nz-modal>
 </div>

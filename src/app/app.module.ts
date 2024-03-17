@@ -26,6 +26,8 @@ import {NzFormModule} from "ng-zorro-antd/form";
 import {NzCheckboxModule} from "ng-zorro-antd/checkbox";
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import {NzMessageService} from "ng-zorro-antd/message";
+import {NzSelectModule} from "ng-zorro-antd/select";
+import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
 
 registerLocaleData(ar);
 
@@ -38,26 +40,28 @@ registerLocaleData(ar);
         AuthComponent,
         DashboardComponent
     ],
-  imports: [
-    TableDataModule,
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    IconsProviderModule,
-    NzLayoutModule,
-    NzMenuModule,
-    NzDividerModule,
-    NzPopconfirmModule,
-    NzInputModule,
-    NzTableModule,
-    NzButtonModule,
-    ReactiveFormsModule,
-    NzFormModule,
-    NzCheckboxModule,
-    NgOptimizedImage,
-  ],
+    imports: [
+        TableDataModule,
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        IconsProviderModule,
+        NzLayoutModule,
+        NzMenuModule,
+        NzDividerModule,
+        NzPopconfirmModule,
+        NzInputModule,
+        NzTableModule,
+        NzButtonModule,
+        ReactiveFormsModule,
+        NzFormModule,
+        NzCheckboxModule,
+        NgOptimizedImage,
+        NzSelectModule,
+        NzDatePickerModule,
+    ],
     providers: [
         {provide: NZ_I18N, useValue: ar_EG},
         NzMessageService,

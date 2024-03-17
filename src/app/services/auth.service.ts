@@ -16,6 +16,7 @@ export class AuthService {
     permissionType:1,
     departmentId:1
   };
+  appConfig = {price:""}
   isAdmin:boolean = false
   sideBarList: any[] = [];
   constructor(
@@ -36,7 +37,8 @@ export class AuthService {
     // console.log(JSON.stringify(body))
     return  this.http.post<any[]>(GlobalVariable.BASE_API_URL+"auth/sessions/",body)
       .subscribe((value:any) => {
-        console.log(value)
+        this.appConfig = value.appConfig
+        console.log(this.appConfig);
         if (value.running === true){
           this.sidePushing(value.session)
         }else{

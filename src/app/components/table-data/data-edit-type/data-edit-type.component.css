@@ -2,3 +2,17 @@ nz-select {
   /*margin: 0 8px 10px 0;*/
   width: 100%;
 }
+.small-image-container{
+  display: flex;
+  width: 60px;
+  height: 20px;
+  cursor: pointer;
+}
+.small-image{
+  width: 40px;
+  height: 20px;
+}
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  background-color: #ffffec;
+  font-size: 12px;
+}

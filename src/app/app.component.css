@@ -8,7 +8,10 @@
 .app-layout {
   height: 100vh;
 }
-
+.ant-menu-inline , .ant-menu-inline-collapsed{
+  height: 75vh;
+  overflow: auto;
+}
 .menu-sidebar {
   position: relative;
   z-index: 10;

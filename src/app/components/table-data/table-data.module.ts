@@ -24,6 +24,7 @@ import {PagesComponent} from "../../pages/pages/pages.component";
 import {RouterLink} from "@angular/router";
 import {NzFormModule} from "ng-zorro-antd/form";
 import {ImagesGridComponent} from "./images-grid/images-grid.component";
+import {UploadComponent} from "./images-grid/upload/upload.component";
 
 
 @NgModule({
@@ -55,7 +56,8 @@ import {ImagesGridComponent} from "./images-grid/images-grid.component";
     UserInfoComponent,
     // ProfileComponent,
     PagesComponent,
-    ImagesGridComponent
+    ImagesGridComponent,
+    UploadComponent
   ],
   exports: [
     TableDataComponent,

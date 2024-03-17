@@ -22,18 +22,26 @@ h2{
   display: grid;
   grid-gap: 1rem;
 }
+.table-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-gap: 1rem;
+}
 
 /* Screen larger than 600px? 2 column */
 @media (min-width: 600px) {
   .cards { grid-template-columns: repeat(2, 1fr); }
+  .table-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Screen larger than 900px? 3 columns */
 @media (min-width: 900px) {
   .cards { grid-template-columns: repeat(3, 1fr); }
+  .table-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-.cards .card {
+.cards .card2 {
   background-color: #ffffff;
   border-radius: 5px;
   font-weight: bold;
@@ -45,21 +53,21 @@ h2{
   cursor: pointer;
 }
 
-.cards .card:hover{
+.cards .card2:hover{
   background-color: rgb(250, 250, 250);
   border: 1px white solid
 }
 
 
-.cards .card div{
+.cards .card2 div{
   font-size: 20px;
   width: 90%;
 }
-.cards .card div div:first-child{
+.cards .card2 div div:first-child{
   color: #0820b1;
 }
 
-.cards .card div div:last-child{
+.cards .card2 div div:last-child{
   font-size: 12px;
   padding-top: 1%;
 }
@@ -75,3 +83,7 @@ h2{
   font-weight: normal;
 }
 
+nz-range-picker {
+  margin: 0 8px 12px 0;
+  font-size: 10px;
+}

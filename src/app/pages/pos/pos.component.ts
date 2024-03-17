@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {TableDataService} from "../../components/table-data/table-data.service";
 import {AuthService} from "../../services/auth.service";
+import {ImagesGridService} from "../../components/table-data/images-grid/images-grid.service";
 
 @Component({
   selector: 'app-pos',
@@ -9,7 +10,7 @@ import {AuthService} from "../../services/auth.service";
 })
 export class PosComponent implements OnInit{
   categoryId:string = '';
-  constructor(public dataService:TableDataService, public authService:AuthService) {
+  constructor(public dataService:TableDataService, public authService:AuthService, public imagesGridService:ImagesGridService) {
     this.time = null as any
   }
   receiveMessage($event:any) {
@@ -20,8 +21,9 @@ export class PosComponent implements OnInit{
   }
   // db: { addProduct: (product: any) => Promise<number | string | Date | ArrayBufferView | ArrayBuffer | IDBValidKey[]>; getProducts: () => Promise<StoreValue<unknown, string>[]>; deleteProduct: (product: any) => Promise<void>; db: IDBPDatabase<unknown>; editProduct: (product: any) => Promise<number | string | Date | ArrayBufferView | ArrayBuffer | IDBValidKey[]> }
   time: Date
-  firstTime: boolean = true
+  saleArgs: any = {clientId:"",paymentType:""}
   products: any[] = []
+  users: any[] = []
   keyword: string = ""
   cart: any[] = []
   discount: number = 0
@@ -30,11 +32,20 @@ export class PosComponent implements OnInit{
   receiptNo: string = ""
   receiptDate: string = ""
   async loadProducts() {
-    let body = {table: 'products'}
+    let body = {table: 'products',where:"quantity > 0"}
     this.dataService.getData(body).subscribe(res=>{
       this.products = res;
+      this.loadUsers()
     })
   }
+  async loadUsers() {
+    let body = {table: 'users'}
+    this.dataService.getData(body).subscribe(res=>{
+      console.log(res)
+      this.users = res;
+    })
+  }
+
   filteredProducts() {
     let list = this.products
     if (this.categoryId){
@@ -47,8 +58,7 @@ export class PosComponent implements OnInit{
     const index = this.findCartIndex(product);
     if (index === -1) {
       this.cart.push({
-        productId: product.id,
-        docId: product.doc_id,
+        doc_id: product.doc_id,
         image: product.product_image,
         name: product.name,
         price: product.price,
@@ -56,15 +66,38 @@ export class PosComponent implements OnInit{
         qty: 1,
       });
     } else {
-      this.cart[index].qty += 1;
+      if (+this.products[index].quantity > +this.cart[index].qty){
+         this.cart[index].qty += 1;
+      }else {
+        this.cart[index].qty = +this.products[index].quantity;
+        this.dataService.createMessage("warning","الكمية في المخزن غير كافية")
+      }
     }
     this.beep();
   }
+
+  quantityChange(product:any,event:any) {
+    let quantity = event.target.value
+    const index = this.findCartIndex(product);
+    if (+quantity < 1){
+      event.target.value = 1;
+      quantity = 1
+    }
+    if (+this.products[index].quantity > +quantity){
+      this.cart[index].qty = +quantity;
+    }else {
+      event.target.value = +this.products[index].quantity;
+      this.cart[index].qty = +this.products[index].quantity;
+      this.dataService.createMessage("warning","الكمية في المخزن غير كافية")
+    }
+    this.beep();
+  }
+
   findCartIndex(product:any) {
-    return this.cart.findIndex((p) => p.productId === product.id);
+    return this.cart.findIndex((p) => p.doc_id === product.doc_id);
   }
   addQty(item:any, qty:any) {
-    const index = this.cart.findIndex((i) => i.productId === item.productId);
+    const index = this.cart.findIndex((i) => i.doc_id === item.doc_id);
     if (index === -1) {
       return;
     }
@@ -73,7 +106,16 @@ export class PosComponent implements OnInit{
       this.cart.splice(index, 1);
       this.clearSound();
     } else {
-      this.cart[index].qty = afterAdd;
+      if (qty < 0){
+        this.cart[index].qty = afterAdd;
+      }else {
+        if (+this.products[index].quantity > +this.cart[index].qty){
+          this.cart[index].qty = afterAdd;
+        }else {
+          this.cart[index].qty = +this.products[index].quantity;
+          this.dataService.createMessage("warning","الكمية في المخزن غير كافية")
+        }
+      }
       this.beep();
     }
   }
@@ -87,7 +129,6 @@ export class PosComponent implements OnInit{
   getTotal() {
     return this.priceFormat( this.getTotalPrice() -  this.discount) ;
   }
-
   updateDiscount() {
     // const value = e.target
     console.log("value");
@@ -109,26 +150,34 @@ export class PosComponent implements OnInit{
     this.receiptDate = this.dateFormat(time);
     let total = this.getTotalPrice() -  this.discount
     let body: any = {
-      doc_id: `${Date.now()}`,
-      client_id: "123",
+      client_id: this.saleArgs.clientId,
       total: total,
       discount: this.discount,
-      user_id: this.authService.getToken(),
-      pay_type: "1",
-      // company_id: "123",
+      pay_type: this.saleArgs.paymentType,
     }
     let innerItemData:any[] = []
+    let innerItemData2:any[] = []
     this.cart.forEach(value => {
       innerItemData.push(
         {
-          product_id:value.docId,
+          product_id:value.doc_id,
           quantity:value.qty,
-          sale_id: body.doc_id
+          // sale_id: body.doc_id
         }
       )
     })
     body.innerItem = {table:"sales_items",data: innerItemData };
-    // console.log(body)
+    if (+body.pay_type == 2){
+      body.innerItem2 = {
+        table:"debts",
+        data: {
+          client_id: this.saleArgs.clientId,
+          money_value: total - this.discount,
+          user_id: this.authService.getToken(),
+        }
+      }
+    }
+    console.log(body)
     this.dataService.saveData(
       'sales',
       true,
@@ -176,7 +225,6 @@ export class PosComponent implements OnInit{
     // @ts-ignore
     // sound.onended = () => delete(sound);
   }
-
   printAndProceed() {
 
     const receiptContent = document.getElementById('receipt-content');

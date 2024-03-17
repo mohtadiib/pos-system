@@ -1,0 +1,9 @@
+<div class="grid-height">
+  <div nz-row [nzGutter]="[hGutter, vGutter]">
+    <div *ngFor="let image of imagesGridService.images; let i = index" nz-col class="gutter-row" [nzSpan]="4">
+      <img (click)="imagesGridService.setSelected(image)" class="{{image?.selected == 1?'inner-box selected-orange':image?.selected == 2?'inner-box selected-green':'inner-box'}}"
+           src="{{imagesGridService.imageUrl+image.image}}" alt="{{image.image}}">
+    </div>
+  </div>
+</div>
+<app-upload />

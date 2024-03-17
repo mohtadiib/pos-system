@@ -1,16 +1,18 @@
+<br />
+<div class="font-bold">{{pageTitle}}</div>
 <div *ngIf="showAddButton()">
   <button nz-button (click)="checkEditing()?saveEdit(editingObject.recordId):
-tableData.customAddButton?routeTo(tableData.customAddButton.routTo):
-tableData.modelAddType?
-showModal():addRow()"
+    tableData.customAddButton?routeTo(tableData.customAddButton.routTo):
+    tableData.modelAddType?
+    showModal():addRow()"
           nzType="primary">
     {{checkEditing()?"تحديث":"اضافة جديد"}}
     <span nz-icon nzType="{{checkEditing()?'edit':'plus'}}" nzTheme="outline"
           style="font-size: 16px;color: #ffffff;"></span>
   </button>
-  <br />
-  <br />
+<br />
 </div>
+<br />
 <nz-table nzLoading="{{tableLoading}}" #editRowTable nzBordered
           [nzData]="listOfData" [nzPageSize]="10" [nzScroll]="{ y: '350px' }">
   <thead>
@@ -18,7 +20,7 @@ showModal():addRow()"
     <th *ngFor="let item of tableData.headers">
       {{item.name}}
     </th>
-    <th>اجراء</th>
+    <th *ngIf="checkIfAddButton()">اجراء</th>
   </tr>
   </thead>
   <tbody>
@@ -29,28 +31,27 @@ showModal():addRow()"
           [header]="tableData.headers![i]"
           [value]="data[keyItem]"
           [record]="data"
+          (messageEvent)="receiveMessage($event)"
         />
       </td>
-      <td>
-        <a *ngIf="tableData.router!.second"
-           [routerLink]="tableData.router!.second+'/'+data.doc_id">
-          <span nz-icon nzType="eye" nzTheme="outline" style="font-size: 18px;color: #808080FF"></span>
-        </a>
-<!--        <a *ngIf="tableData.router!.second && !checkActionButtons(data)"-->
-<!--           [routerLink]="tableData.router!.second+'/view/'+'/'+data.doc_id">-->
-<!--          <button nz-button nzType="default">-->
-<!--            <span nz-icon nzType="eye" nzTheme="outline" style="font-size: 18px;color: #808080FF"></span>-->
-<!--          </button>-->
-<!--        </a>-->
-        <nz-divider *ngIf="checkActionButtons(data)" nzType="vertical"></nz-divider>
-        <a *ngIf="checkActionButtons(data)" (click)="startEdit(data.doc_id!)">
+      <td *ngIf="checkIfAddButton()">
+        <a *ngIf="checkActionButtons('edit')" (click)="startEdit(data.doc_id!)">
           <span nz-icon nzType="edit" nzTheme="fill" style="font-size: 18px;"></span>
         </a>
-        <nz-divider *ngIf="checkActionButtons(data)" nzType="vertical"></nz-divider>
-        <a *ngIf="checkActionButtons(data)"
+        <nz-divider *ngIf="checkActionButtons('delete')" nzType="vertical"></nz-divider>
+        <a *ngIf="checkActionButtons('delete')"
            nz-popconfirm="m" nzPopconfirmTitle="حذف السجل؟"
            (nzOnConfirm)="deleteRow(data.doc_id!)">
           <span nz-icon nzType="delete" nzTheme="fill" style="font-size: 18px; color: #ff0000;"></span>
+        </a>
+        <nz-divider *ngIf="checkActionButtons('return',!tableData.customCrud?.includes('return'))" nzType="vertical"></nz-divider>
+        <a *ngIf="checkActionButtons('return',!tableData.customCrud?.includes('return')) && +data.status < 2"
+           nz-popconfirm="m" nzPopconfirmTitle="الغاء العملية؟"
+           (nzOnConfirm)="cancelRow(data)">
+          <span nz-icon nzType="delete" nzTheme="fill" style="font-size: 18px; color: #656565;"></span>
+        </a>
+        <a disabled *ngIf="checkActionButtons('return',!tableData.customCrud?.includes('return')) && +data.status == 2">
+          <span nz-icon nzType="delete" nzTheme="fill" style="font-size: 18px; color: #d3d3d3;"></span>
         </a>
       </td>
     </ng-container>
@@ -61,6 +62,7 @@ showModal():addRow()"
             [header]="tableData.headers![i]"
             [value]="editCache[data.doc_id!].data[keyItem]"
             [keyItem]="keyItem"
+            (setSizeField)="receiveSize($event)"
           ></app-data-edit-type>
         </form>
       </td>
@@ -89,6 +91,7 @@ showModal():addRow()"
             [value]="editingObject.recordId?
             editCache[editingObject.recordId].data[keyItem]:''"
             [keyItem]="keyItem"
+            (setSizeField)="receiveSize($event)"
           ></app-data-edit-type>
         </nz-form-control>
       </nz-form-item>

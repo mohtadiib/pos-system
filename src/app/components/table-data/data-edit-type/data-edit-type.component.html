@@ -1,13 +1,21 @@
-<button style="background-color: #fffff0" *ngIf="header?.type == 'image_view'" (click)="showModal()" nz-button nzType="default">
+<div style="background-color: #fffff0;cursor: pointer" *ngIf="header?.type == 'image_view' && !tableDataService.selectedImage?.image" (click)="showModal()" nz-button nzType="default">
   <span nz-icon nzType="edit"></span>
   حدد صورة
-</button>
+</div>
+<div (click)="showModal()" class="small-image-container"
+     *ngIf="header?.type == 'image_view' && tableDataService.selectedImage?.image">
+  <span nz-icon nzType="edit"></span>
+  <img class="small-image" src="{{imagesGridService.imageUrl+tableDataService.selectedImage.image}}" alt="image">
+</div>
 <input #input [hidden]="header.hidden" *ngIf="header?.type == '' || header?.type == 'list'"
        [placeholder]="value == undefined?0:''"
        type="text" nz-input
        [formControlName] = "keyItem"
+       (keyup)="setChangeSize()"
 />
+<div class="text-center" *ngIf="header?.hidden">{{form.get(keyItem)?.value}}</div>
 <nz-select
+  (nzOpenChange)="setPrice($event)"
   *ngIf="header?.type == 'tag' || header?.type == 'fill_tag' || header?.type == 'online_list' || header?.type == 'tags_list'"
   [formControlName] = "keyItem"
 >
@@ -21,16 +29,16 @@
 
 
 
-<div *ngIf="header?.type == 'image_view' && isVisibleModel" >
-  <nz-modal
-    [nzStyle]="{width: '80%'}"
-    [(nzVisible)]="isVisibleModel"
-    nzTitle="اختر صورة"
-    [nzFooter]="null"
-    (nzOnCancel)="handleCancel()"
-  >
-    <ng-container *nzModalContent>
-
-    </ng-container>
-  </nz-modal>
-</div>
+<nz-modal
+  *ngIf="header?.type == 'image_view'"
+  [nzStyle]="{width: '80%'}"
+  [(nzVisible)]="tableDataService.isVisibleModel"
+  nzTitle="اختر صورة"
+  [nzFooter]="null"
+  (nzOnCancel)="handleCancel()"
+  (nzAfterClose)="afterModalClose()"
+>
+  <ng-container *nzModalContent>
+    <app-images-grid />
+  </ng-container>
+</nz-modal>

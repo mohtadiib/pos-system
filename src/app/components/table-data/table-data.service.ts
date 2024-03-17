@@ -4,12 +4,13 @@ import {GlobalVariable} from "../../common/consts";
 import {Observable} from "rxjs";
 import {AuthService} from "../../services/auth.service";
 import {NzMessageService} from "ng-zorro-antd/message";
-
 @Injectable({
   providedIn: 'root'
 })
 export class TableDataService {
   focusField:boolean = false
+  isVisibleModel = false;
+  selectedImage:any = {}
   constructor(private message: NzMessageService,private http:HttpClient, private authService:AuthService) { }
   getData(body:any,method:string = ""): Observable<any[]> {
     // if (body.where && body.table == "operations" && this.authService.isDepartment()){
@@ -28,13 +29,13 @@ export class TableDataService {
       method = 'insert/';
     }
     let body = {
-      table:typeof table == "string"?table:table.table,
+      table: typeof table == "string"?table:table.table,
       id:data.doc_id,
       data:data,
-      foreignField:table.foreignField!,
+      foreignField: table.foreignField!,
       sessionId: this.authService.getToken()
     };
-    // console.log(JSON.stringify(body))
+    console.log(JSON.stringify(body))
     return this.http.post<any[]>(GlobalVariable.BASE_API_URL+method,body);
   }
   deleteRecord(table:string,recordId:string){

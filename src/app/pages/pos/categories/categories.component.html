@@ -2,9 +2,9 @@
   <div id="categories" >
     <ul *ngFor="let cat of categories; let i = index">
       <li (click)="select(i)" class="{{cat.select?'category category-select':'category'}}">
-        <div class="imag">
-          <img class="imag-real" src="../../assets/img/beef-burger.png" alt="mm">
-        </div>
+<!--        <div class="imag">-->
+<!--&lt;!&ndash;          <img class="imag-real" src="../../assets/img/beef-burger.png" alt="mm">&ndash;&gt;-->
+<!--        </div>-->
         <div class="text">
           {{cat.name}}
         </div>
