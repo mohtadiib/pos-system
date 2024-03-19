@@ -94,7 +94,7 @@ export class TableDataComponent implements OnInit, OnChanges{
     this.updateEditCache();
     this.startEdit('');
   }
-  checkCustomApi(unput:boolean){
+  checkCustomApi(input:boolean){
     let body = {table:this.tableData.table}
     if (this.tableData.customApiBody?.foreignField && this.foreignId){
       let apiBody = this.tableData.customApiBody
@@ -102,7 +102,7 @@ export class TableDataComponent implements OnInit, OnChanges{
       // apiBody.innerTable = innerTableName
       body = apiBody
     }else if(this.tableData.customApiBody){
-      body = unput?this.tableData.customApiBody.table:this.tableData.customApiBody
+      body = input?this.tableData.customApiBody.table:this.tableData.customApiBody
     }
     return body
   }
@@ -171,6 +171,7 @@ export class TableDataComponent implements OnInit, OnChanges{
   }
   storeData(data:any,call:any){
     let body = this.checkCustomApi(true)
+    data.innerItem2 = this.tableData?.customApiBody?.innerItem2!
     this.tableApiService.saveData(
       body!,
       this.editingObject.adding,

@@ -35,13 +35,21 @@ class DataSources{
         customApiBody:{
           table:"incoming",
           foreignFields:[
-            {field:"supplier_id",table:"suppliers"},
+            {field:"supplier_id",table:"users"},
             {field:"product_id",table:"products"},
           ],
+          innerItem2: {
+            conditionFiled: { pay_type: 2 },
+            table:"debts",
+            data: {
+              client_id: "supplier_id",
+              money_value: "total_cost"
+            }
+          }
         },
         headers: [
           { name: "الرقم", type: "", hidden: true },
-          { name: "المورد", type: "online_list", innerTableName: "suppliers" },
+          { name: "المورد", type: "online_list", innerTableName: "users", where: " role = 2 " },
           { name: "العنصر", type: "online_list", innerTableName: "products" },
           { name: "الكمية", type: "" },
           { name: "التكلفة", type: "" },
@@ -157,7 +165,7 @@ class DataSources{
           doc_id: '',
           name: '',
           price: '',
-          image: '',
+          category_image: '',
           active: '1',
         }
       }
@@ -267,34 +275,6 @@ class DataSources{
       }
     },
     {
-      title: "الصلاحيات",
-      icon:"block",
-      router: "/departments",
-      path:"departments",
-      tableData: {
-        router: { main:"/departments"},
-        table:"departments",
-        headers: [
-          { name: "الرقم", type: "", hidden: true },
-          { name: "الاسم", type: "" },
-          { name: "الصلاحية", type: "tags_list",
-            values:[
-              {name:'مبيعات',value:'0',color:'#1388c7'},
-              {name:'مدير',value:'1',color:'#deae47'},
-              {name:'مبيعات',value:'2',color:'#39c23e'},
-            ]
-          },
-          { name: "الحالة", type: "tag", values:[{name:'معلق',value:'0'}, {name:'نشط',value:'1'}]},
-        ],
-        model:{
-          doc_id: '',
-          name: '',
-          type: '',
-          active: '1',
-        }
-      },
-    },
-    {
       title: "المستخدمين",
       icon:"block",
       router: "/users",
@@ -310,18 +290,24 @@ class DataSources{
         },
         headers: [
           { name: "الرقم", type: "", hidden: true },
-          { name: "القسم", type: "online_list", innerTableName: "departments" },
           { name: "الإسم", type: "" },
           { name: "اسم المستخدم", type: "" },
           { name: "كلمة المرور", type: "" },
+          { name: "الصلاحية", type: "tags_list",
+            values:[
+              {name:'مبيعات',value:'0',color:'#1388c7'},
+              {name:'مدير',value:'1',color:'#deae47'},
+              {name:'مورد',value:'2',color:'#6c6c6c'},
+            ]
+          },
           { name: "الحالة", type: "tag", values:[{name:'معلق',value:'0'}, {name:'نشط',value:'1'}]},
         ],
         model:{
           doc_id: '',
-          department_id: '',
           name: '',
           username: '',
           password: '',
+          role: '',
           active: '1',
         }
       },
@@ -394,6 +380,18 @@ class DataSources{
         },
         headers: [
           { name: "الرقم", type: "", hidden: true },
+          { name: "دائن / مدين", type: "icons_list",
+            values:[
+              {name:'دائن',value:'0',color:'#27a100',icon:"arrow-down"},
+              {name:'مدين',value:'1',color:'#ff0000',icon:"arrow-up"},
+            ],
+            disabled: true
+          },
+          { name: "المبلغ", type: "", completeModel: {title: "دفع الدين",placeholder:"ادخل المبلغ المدفوع"} },
+          { name: "المدفوع", type: "", disabled: true},
+          { name: "رقم العملية", type: "", disabled: true },
+          { name: "الموظف", type: "online_list", innerTableName: "users", disabled: true },
+          { name: "العميل", type: "online_list", innerTableName: "users" },
           { name: "الحالة", type: "tags_list",
             values:[
               {name:'غير مسدد',value:'0',color:'#a9a9a9'},
@@ -401,58 +399,22 @@ class DataSources{
               {name:'ملغي',value:'2',color:'#ff0000'}
             ],
           },
-          { name: "المبلغ", type: "", completeModel: {title: "دفع الدين",placeholder:"ادخل المبلغ المدفوع"} },
-          { name: "المدفوع", type: "", disabled: true},
-          { name: "رقم العملية", type: "", disabled: true },
-          { name: "الموظف", type: "online_list", innerTableName: "users", disabled: true },
-          { name: "العميل", type: "online_list", innerTableName: "users" },
           { name: "الانشاء", type: "", disabled: true  },
           { name: "التعديل", type: "", disabled: true  },
         ],
         model:{
           doc_id: '',
-          debt_status: '',
+          income: '0',
           money_value: '',
           payed: '',
-
           sale_id: '',
           user_id: '',
           client_id: '',
-
+          debt_status: '',
           created_at: Date.now(),
           updated_at: Date.now(),
         }
       }
-    },
-    {
-      title: "الموردين",
-      icon:"pie-chart",
-      router: "/suppliers",
-      path:"suppliers",
-      tableData: {
-        // modelAddType:true,
-        router: { main:"/suppliers"},
-        customApiBody:{
-          table:"suppliers",
-        },
-        headers: [
-          { name: "الرقم", type: "", hidden: true },
-          { name: "الاسم", type: ""},
-          { name: "رقم الهاتف", type: "" },
-          { name: "العنوان", type: "" },
-          { name: "تاريخ الإنشاء", type: "", disabled: true },
-          { name: "الحالة", type: "tag", values:[{name:'معلق',value:'0'}, {name:'نشط',value:'1'}]},
-        ],
-        model:{
-          doc_id: '',
-          name: '',
-          phone: '',
-          address: '',
-          created_at: Date.now(),
-          active: "1",
-        }
-      },
-      // permissions:[2]
     },
     {
       title: "التقارير",
@@ -519,7 +481,8 @@ class DataSources{
             // updated_at: '',
           }
         }
-    }]
+    }
+    ]
 }
 
 export default DataSources
@@ -586,4 +549,32 @@ export default DataSources
 //       wallet_transactions: undefined,
 //   }
 // }
+// },
+// {
+//   title: "الصلاحيات",
+//     icon:"block",
+//   router: "/departments",
+//   path:"departments",
+//   tableData: {
+//   router: { main:"/departments"},
+//   table:"departments",
+//     headers: [
+//     { name: "الرقم", type: "", hidden: true },
+//     { name: "الاسم", type: "" },
+//     { name: "الصلاحية", type: "tags_list",
+//       values:[
+//         {name:'مبيعات',value:'0',color:'#1388c7'},
+//         {name:'مدير',value:'1',color:'#deae47'},
+//         {name:'مورد',value:'2',color:'#6c6c6c'},
+//       ]
+//     },
+//     { name: "الحالة", type: "tag", values:[{name:'معلق',value:'0'}, {name:'نشط',value:'1'}]},
+//   ],
+//     model:{
+//     doc_id: '',
+//       name: '',
+//       type: '',
+//       active: '1',
+//   }
+// },
 // },

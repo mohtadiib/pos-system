@@ -1,5 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {TableDataService} from "../../../components/table-data/table-data.service";
+import {ImagesGridService} from "../../../components/table-data/images-grid/images-grid.service";
 
 @Component({
   selector: 'app-categories',
@@ -9,7 +10,7 @@ import {TableDataService} from "../../../components/table-data/table-data.servic
 export class CategoriesComponent implements OnInit{
   @Output() messageEvent = new EventEmitter<string>();
   categories:any[] = []
-  constructor(private dataService:TableDataService) {
+  constructor(private dataService:TableDataService, public imagesGridService:ImagesGridService) {
     this.categories = [
       {title:"وجبة", select:true},
       {title:"ساندويتش", select:false},

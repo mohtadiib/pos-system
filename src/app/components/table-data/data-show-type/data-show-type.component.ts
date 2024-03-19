@@ -33,7 +33,7 @@ export class DataShowTypeComponent{
     let status = 0
     if (this.payed == this.value)
       status = 1
-    let payedData = {doc_id: this.record.doc_id,payed: this.payed, debt_status: status}
+    let payedData = { doc_id: this.record.doc_id, payed: this.payed, debt_status: status }
     this.messageEvent.emit(payedData)
   }
   changePayed() {

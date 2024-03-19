@@ -32,8 +32,16 @@ export class PosComponent implements OnInit{
   receiptNo: string = ""
   receiptDate: string = ""
   async loadProducts() {
-    let body = {table: 'products',where:"quantity > 0"}
-    this.dataService.getData(body).subscribe(res=>{
+    let body = {
+      table: 'products',
+      where:"quantity > 0",
+      foreignFields: [
+        { field: "category_id", table:"categories"},
+        { field:"unit_id",table:"units" },
+      ],
+    }
+    this.dataService.getData(body).subscribe(res=> {
+      console.log(res)
       this.products = res;
       this.loadUsers()
     })
@@ -49,7 +57,7 @@ export class PosComponent implements OnInit{
   filteredProducts() {
     let list = this.products
     if (this.categoryId){
-      list = this.products.filter(value => value.category_id == this.categoryId)
+      list = this.products.filter(value => value.category_id.doc_id == this.categoryId)
     }
     const rg = this.keyword ? new RegExp(this.keyword, "gi") : null;
     return list.filter((p) => !rg || p.name.match(rg));
@@ -60,6 +68,7 @@ export class PosComponent implements OnInit{
       this.cart.push({
         doc_id: product.doc_id,
         image: product.product_image,
+        category: product.category_id.name,
         name: product.name,
         price: product.price,
         option: product.option,
@@ -173,7 +182,7 @@ export class PosComponent implements OnInit{
         data: {
           client_id: this.saleArgs.clientId,
           money_value: total - this.discount,
-          user_id: this.authService.getToken(),
+          income: 1,
         }
       }
     }

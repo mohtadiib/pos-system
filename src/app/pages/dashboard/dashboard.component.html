@@ -12,7 +12,7 @@
       <span style="margin: 0; font-size: 18px" nz-icon nzType="arrow-right" nzTheme="outline" ></span>
     </button>
     <div style="padding: .5rem 3vh 0 0;" class="font-bold">{{reportPage?"الاجماليات":"اجماليات اليوم"}}</div>
-    <nz-range-picker *ngIf="reportPage" [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-range-picker>
+    <nz-range-picker *ngIf="reportPage" [(ngModel)]="date" (ngModelChange)="onChangeDateRange($event)"></nz-range-picker>
     <br />
   </div>
   <div class="cards">

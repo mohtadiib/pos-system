@@ -129,7 +129,7 @@
                 <div class="select-none mb-3 bottom-border rounded-lg w-full text-blue-gray-700 py-2 px-2 flex justify-center">
                   <img src="{{imagesGridService.imageUrl+item.image}}" alt="" class="rounded-lg h-10 w-10 bg-white shadow ml-2">
                   <div class="flex-grow">
-                    <h5 class="text-sm" >{{item.name}}</h5>
+                    <h5 class="text-sm" >{{item.category+" - "+item.name}}</h5>
                     <p class="text-xs block" >{{priceFormat(item.price)}}</p>
                   </div>
                   <div class="py-1">
@@ -176,7 +176,7 @@
             <div
               class="flex font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
             >
-              <div class="text-blue-gray-200">خصم</div>
+              <div class="text-blue-gray-200">الدفع</div>
               <div class="mr-52 w-full">
                 <nz-select
                   [(ngModel)]="saleArgs.paymentType"

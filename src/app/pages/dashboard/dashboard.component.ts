@@ -31,21 +31,24 @@ export class DashboardComponent implements OnInit{
     ]
   }
   dashboardListBackup:any = this.body.dashboard
-  tables:any = {
-    values:[],
-  }
+  tables:any = {}
   reportPage:boolean = this.router.url === '/report'
   date :any[] = [];
   constructor(private dataService:TableDataService,
               private router: Router) {}
   getData(){
     this.tables.values = []
-    console.log(this.body.dashboard)
+    // console.log(this.body.dashboard)
     this.dataService.getData(this.body).subscribe((value:any) => {
+      // console.log(value)
       this.tables.values = value.tables
     })
   }
   ngOnInit(): void {
+    this.pageTitle = this.pageTitleBackup.daily
+    if (this.reportPage){
+      this.pageTitle = this.pageTitleBackup.report
+    }
     this.setReportModal()
     if (!this.reportPage)
     this.setDatesOnDashboard([this.currentDate,this.currentDate])
@@ -64,22 +67,19 @@ export class DashboardComponent implements OnInit{
   }
    setFilter(filter:string,where:any = null,index:number = 0){
      this.mainReports = false
+     this.pageTitle = this.body.dashboard[index].title
      this.body.dashboard = this.body.dashboard.filter((value:any) => value.table == filter)
-     this.pageTitle = this.tables.titles[index]
      this.getData()
      this.setReportModal(this.body.dashboard[0].table,where)
    }
   back() {
     this.mainReports = true
     this.body.dashboard = this.dashboardListBackup
-    this.pageTitle = this.pageTitleBackup.daily
-    if (this.reportPage){
-      this.pageTitle = this.pageTitleBackup.report
-    }
+    this.setReportModal()
     this.getData()
   }
 
-  onChange(result: Date[]): void {
+  onChangeDateRange(result: Date[]): void {
     this.resetDashboardList()
     if (!this.reportObject.customApiBody.backUpWhere){
       this.reportObject.customApiBody.where = this.reportObject.customApiBody?.backUpWhere

@@ -47,7 +47,7 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
   }
   getInnerTableData(){
     if (this.header?.type == 'online_list'){
-      let body = {table:this.header.innerTableName}
+      let body = {table: this.header.innerTableName, where: this.header.where}
       this.tableDataService.getData(body).subscribe(res=> {
         console.log(res)
         this.choicesList = res;
