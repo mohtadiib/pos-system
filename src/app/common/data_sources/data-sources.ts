@@ -31,10 +31,10 @@ class DataSources{
       path:"income",
       tableData: {
         // modelAddType:true,
-        router: { main:"/income"},
-        customApiBody:{
+        router: { main:"/income" },
+        customApiBody: {
           table:"incoming",
-          foreignFields:[
+          foreignFields: [
             {field:"supplier_id",table:"users"},
             {field:"product_id",table:"products"},
           ],
@@ -55,16 +55,16 @@ class DataSources{
           { name: "التكلفة", type: "" },
           { name: "الدفع", type: "tags_list",
             values:[
-              {name:'كاش',value:'0',color:'#71b649'},
-              {name:'بنكك',value:'1',color:'#deae47'},
-              {name:'دين',value:'2',color:'#888888'},
+              { name:'كاش',  value:'0', color:'#71b649' },
+              { name:'بنكك', value:'1', color:'#deae47' },
+              { name:'دين',  value:'2', color:'#888888' },
             ]
           },
           { name: "الحالة", type: "tags_list",
             values: [
-              {name:'لم يتم',value:'0',color:'#737373'},
-              {name:'تم',value:'1',color:'#45ce00'},
-              {name:'ملغي',value:'2',color:'#ff0000'},
+              { name:'لم يتم', value:'0', color:'#737373'},
+              { name:'تم',     value:'1', color:'#45ce00'},
+              { name:'ملغي',   value:'2', color:'#ff0000'},
             ]
           },
           { name: "تاريخ الإنشاء", type: "", disabled: true },
@@ -387,7 +387,7 @@ class DataSources{
             ],
             disabled: true
           },
-          { name: "المبلغ", type: "", completeModel: {title: "دفع الدين",placeholder:"ادخل المبلغ المدفوع"} },
+          { name: "المبلغ", type: "", completeModel: {title: "دفع الدين",placeholder:"ادخل المبلغ المدفوع", keyOfLinkedField:"payed"} },
           { name: "المدفوع", type: "", disabled: true},
           { name: "رقم العملية", type: "", disabled: true },
           { name: "الموظف", type: "online_list", innerTableName: "users", disabled: true },

@@ -55,7 +55,7 @@
     (nzOnOk)="onOk()"
   >
     <ng-container *nzModalContent>
-      المبلغ المستحق هو {{value}}
+      المبلغ المستحق هو {{dueAmount}}
       <input (keyup)="changePayed()" #input [(ngModel)]="payed" [placeholder]="header?.completeModel?.placeholder" type="number" nz-input />
     </ng-container>
   </nz-modal>
