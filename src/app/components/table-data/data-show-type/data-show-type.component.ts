@@ -38,8 +38,9 @@ export class DataShowTypeComponent{
     let status = 0
     if (this.payed == this.dueAmount)
       status = 1
+    let realPay = this.payed
     this.payed += this.valueOfLinkedField
-    let payedData = { doc_id: this.record.doc_id, payed: this.payed, debt_status: status }
+    let payedData = { doc_id: this.record.doc_id, payed: this.payed, debt_status: status, realPay: realPay }
     this.messageEvent.emit(payedData)
   }
   changePayed() {

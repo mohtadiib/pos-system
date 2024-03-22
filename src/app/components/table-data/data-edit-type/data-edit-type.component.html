@@ -7,11 +7,11 @@
   <span nz-icon nzType="edit"></span>
   <img class="small-image" src="{{imagesGridService.imageUrl+tableDataService.selectedImage.image}}" alt="image">
 </div>
-<input #input [hidden]="header.hidden" *ngIf="header?.type == '' || header?.type == 'list'"
+<input #input [hidden]="header.hidden" *ngIf="header?.type == '' || header?.type == 'list' || header?.type == 'get_online_list' "
        [placeholder]="value == undefined?0:''"
        type="text" nz-input
        [formControlName] = "keyItem"
-       (keyup)="setChangeSize()"
+       (keyup)="inputChange($event)"
 />
 <div class="text-center" *ngIf="header?.hidden">{{form.get(keyItem)?.value}}</div>
 <nz-select

@@ -63,6 +63,7 @@
             [value]="editCache[data.doc_id!].data[keyItem]"
             [keyItem]="keyItem"
             (setSizeField)="receiveSize($event)"
+            [selectedListItem]="itemFromEditComponent"
           ></app-data-edit-type>
         </form>
       </td>

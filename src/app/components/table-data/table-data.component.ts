@@ -22,7 +22,7 @@ export class TableDataComponent implements OnInit, OnChanges{
   keysEditModel: any[] = [];
   editingObject: { recordId: string, adding: boolean } = { recordId: "",adding: false };
   tableLoading: boolean = false
-  categoryPrice: number = 0
+  itemFromEditComponent: any = { price: 0}
   constructor(
     public tableApiService:TableDataService,
     public router:Router,
@@ -37,11 +37,11 @@ export class TableDataComponent implements OnInit, OnChanges{
   //set general price from size field to price field
   receiveSize($event:any){
     if ($event){
-      this.categoryPrice = $event
+      this.itemFromEditComponent = $event
     }
     // @ts-ignore
     let size = +this.form.value.size?+this.form.value.size:1
-    this.form.setValue({...this.form.value,price: this.categoryPrice * size })
+    this.form.setValue({...this.form.value,price: this.itemFromEditComponent.price * size })
   }
   ngOnInit(): void {
     // this.getData()

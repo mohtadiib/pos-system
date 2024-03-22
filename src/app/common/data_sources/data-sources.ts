@@ -41,6 +41,7 @@ class DataSources{
           innerItem2: {
             conditionFiled: { pay_type: 2 },
             table:"debts",
+            where: { field:"client_id", value:"supplier_id"},
             data: {
               client_id: "supplier_id",
               money_value: "total_cost"
@@ -102,9 +103,9 @@ class DataSources{
         },
         headers: [
           { name: "الرقم", type: "", hidden: true },
-          { name: "الفئة", type: "online_list", innerTableName: "categories", categoryPrice: { keyItem: "category_id" } },
-          { name: "المنتج", type: "" },
-          { name: "المقاس", type: "", categoryPrice: { keyItem: "price" }  },
+          { name: "الفئة", type: "online_list", innerTableName: "categories", categoryPrice: true, setField: "name" },
+          { name: "المنتج", type: "", hidden: true },
+          { name: "المقاس", type: "", categoryPrice: { keyItem: "price" }, setField: "name" },
           { name: "الوحدة", type: "online_list", innerTableName: "units" },
           { name: "السعر", type: "", hidden: true},
           { name: "الكمية", type: "", hidden: true },
@@ -456,9 +457,10 @@ class DataSources{
             { name: "نوع العملية", type: "tags_list",
               values:[
                 {name:'مبيعات',value:'0',color:'#77b470'},
-                {name:'منصرفات',value:'1',color:'#c26c6c'},
+                {name:'منصرفات',value:'1',color:'#e05050'},
                 {name:'وارد',value:'2',color:'#c9852c'},
                 {name:'رصيد',value:'3',color:'#0029ff'},
+                {name:'سداد دين',value:'4',color:'#e05050'},
               ],
               disabled: true
             },

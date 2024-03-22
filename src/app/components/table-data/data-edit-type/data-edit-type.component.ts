@@ -19,6 +19,7 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
   @Input() keyItem!: any;
   @Input() value!: any;
   @Input() header!: any;
+  @Input() selectedListItem!: any;
   @Output() setSizeField = new EventEmitter<any>()
   form!: FormGroup;
   choicesList: any[] = []
@@ -49,7 +50,7 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
     if (this.header?.type == 'online_list'){
       let body = {table: this.header.innerTableName, where: this.header.where}
       this.tableDataService.getData(body).subscribe(res=> {
-        console.log(res)
+        // console.log(res)
         this.choicesList = res;
       })
     }
@@ -82,19 +83,24 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
     }
   }
 
-  setChangeSize() {
+  inputChange(event:any) {
     if (this.header.categoryPrice){
       this.setSizeField.emit()
+    }
+    if (this.header.setField){
+      let name = this.selectedListItem.name
+      let value = name + " " + event.target.value
+      this.form.controls[this.header?.setField].setValue(value);
     }
   }
 
   setPrice(event:any) {
-    console.log(this.header.categoryPrice)
     if (!event && this.header?.type == "online_list" && this.header.categoryPrice){
-      let price = this.choicesList.find(value => value.doc_id == this.form.get(this.header.categoryPrice.keyItem)?.value).price
-      this.setSizeField.emit(price)
+      let item = this.choicesList.find(value => value.doc_id == this.form.get(this.keyItem)?.value)
+      this.setSizeField.emit(item)
+      if (this.header?.setField){
+        this.form.controls[this.header?.setField].setValue(item.name);
+      }
     }
   }
-
-  protected readonly event = event;
 }
