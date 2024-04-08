@@ -11,11 +11,12 @@ import {AuthService} from "../../services/auth.service";
   styleUrls: ['./table-data.component.css']
 })
 export class TableDataComponent implements OnInit, OnChanges{
-  form = new FormGroup({});
+  form: FormGroup = new FormGroup({});
   index:number = 0
   @Input() inputTableData!: TableData;
   @Input() foreignId!: string;
   @Input() pageTitle!: string;
+  @Input() pagination: boolean = true;
   tableData!:TableData
   editCache: { [key: string]: { edit: boolean; data: any } } = {};
   listOfData: any[] = [];
@@ -23,10 +24,26 @@ export class TableDataComponent implements OnInit, OnChanges{
   editingObject: { recordId: string, adding: boolean } = { recordId: "",adding: false };
   tableLoading: boolean = false
   itemFromEditComponent: any = { price: 0}
+
+  searchValue: string = ""
   constructor(
     public tableApiService:TableDataService,
     public router:Router,
     public authService:AuthService) {
+  }
+
+  //Table Search Field **************************************************************************
+  inputSearchChange(){
+    console.log(this.searchValue)
+  }
+  filteredListOfData() {
+    let list = this.listOfData
+    const rg = this.searchValue ? new RegExp(this.searchValue, "gi") : null;
+    if (this.tableData?.searchable?.keyFilter){
+    console.log(this.listOfData[0])
+      list = list.filter((p) => !rg || p.client_id.name.match(rg));
+    }
+    return list
   }
   // modelData = () => this.tableData2[this.index];
   receiveMessage($event:any){
@@ -36,12 +53,13 @@ export class TableDataComponent implements OnInit, OnChanges{
   }
   //set general price from size field to price field
   receiveSize($event:any){
+    console.log($event)
     if ($event){
       this.itemFromEditComponent = $event
     }
     // @ts-ignore
-    let size = +this.form.value.size?+this.form.value.size:1
-    this.form.setValue({...this.form.value,price: this.itemFromEditComponent.price * size })
+    let size = +this.form.value.size? +this.form.value.size : 1
+    this.form.setValue({...this.form.value, cost: this.itemFromEditComponent.price * size })
   }
   ngOnInit(): void {
     // this.getData()
@@ -138,9 +156,16 @@ export class TableDataComponent implements OnInit, OnChanges{
     this.editingObject.adding = false;
   }
   submitForm(): void {
-    // console.log('submit', this.form.value);
-    const data = this.form.value
-    this.storeData(data,()=> {})
+    if (this.form.valid){
+      this.storeData(this.form.value,()=> {})
+    }else {
+      Object.values(this.form.controls).forEach(control => {
+        if (control.invalid) {
+            control.markAsDirty();
+            control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
   }
   //Api Functions *****************************
   public getData(){
@@ -164,10 +189,17 @@ export class TableDataComponent implements OnInit, OnChanges{
     Object.assign(this.listOfData[index], this.editCache[doc_id].data);
     //get inner Table name from headers
     let data: any = this.form.value
-    data.id = this.listOfData[index].id
-    this.storeData(data,()=> {
-      this.editCache[doc_id].edit = false;
-    })
+    // data.id = this.listOfData[index].id
+    delete data.doc_id
+    console.log(this.form.valid)
+    console.log(this.form.value)
+    if (this.form.valid){
+      this.storeData(data,()=> {
+        this.editCache[doc_id].edit = false;
+      })
+    }else {
+      this.tableApiService.createMessage('error',"قم بملء جميع الحقول")
+    }
   }
   storeData(data:any,call:any){
     let body = this.checkCustomApi(true)

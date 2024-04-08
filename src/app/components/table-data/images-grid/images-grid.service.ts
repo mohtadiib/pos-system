@@ -10,9 +10,9 @@ export class ImagesGridService {
   imageUrl: string = GlobalVariable.BASE_API_URL_IMAGES
   constructor(private tableDataService: TableDataService) { }
   getImages(){
-    const body = {"table":"images"}
+    const body = {table:"images", withAdmin: true}
     this.tableDataService.getData(body).subscribe(value => {
-      // console.log(value)
+      console.log(value)
       this.images = value
     })
   }

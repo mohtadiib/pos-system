@@ -24,21 +24,16 @@ h2{
 }
 .table-grid {
   max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-gap: 1rem;
 }
 
 /* Screen larger than 600px? 2 column */
 @media (min-width: 600px) {
   .cards { grid-template-columns: repeat(2, 1fr); }
-  .table-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Screen larger than 900px? 3 columns */
 @media (min-width: 900px) {
   .cards { grid-template-columns: repeat(3, 1fr); }
-  .table-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 .cards .card2 {
@@ -55,7 +50,7 @@ h2{
 
 .cards .card2:hover{
   background-color: rgb(250, 250, 250);
-  border: 1px white solid
+  /*border: 1px white solid*/
 }
 
 

@@ -3,7 +3,6 @@ import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
 import {NzMessageService} from "ng-zorro-antd/message";
-
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',

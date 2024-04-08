@@ -1,5 +1,12 @@
-
-
+export const numberFormat = function (number:number) {
+  return (number || "")
+    .toString()
+    .replace(/^0|\./g, "")
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+}
+export const priceFormat = function (number:number) {
+  return number ? ` ${numberFormat(number)} جنيه ` : ``;
+}
 
 export const convertArabicToEng = function (num:string) {
   const rules = {

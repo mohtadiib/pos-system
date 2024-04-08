@@ -19,7 +19,7 @@
     <div (click)="setFilter(body.dashboard[i].table,body.dashboard[i].where,i)" class="card2" *ngFor="let table of tables.values; let i = index">
       <div>
         <div>
-          {{table.total?table.total:table.count}}
+          {{table.total?priceFormat(table.total):table.count}}
         </div>
         <div>
           {{body.dashboard[i].title}}
@@ -28,7 +28,7 @@
       <span nz-icon [nzType]="body.dashboard[i].icon"></span>
     </div>
   </div>
-  <div [class]="reportPage?'':'table-grid'">
-    <app-table-data [inputTableData]="reportObject" [pageTitle]="pageTitle"/>
+  <div [class]="reportPage || reportObject?.customApiBody?.table != 'transactions'?'':'w-1/2'">
+    <app-table-data [pagination]="false" [inputTableData]="reportObject" [pageTitle]="pageTitle"/>
   </div>
 </div>

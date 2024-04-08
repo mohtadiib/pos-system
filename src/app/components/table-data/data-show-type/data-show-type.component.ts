@@ -12,7 +12,7 @@ export class DataShowTypeComponent{
   @Input() value!: any;
   @Input() record!: any;
   @Output() messageEvent = new EventEmitter<any>()
-  payed: number = 0
+  payed: string = ""
   valueOfLinkedField: number = 0
   dueAmount: number = 0
   constructor(public imagesGridService: ImagesGridService, private tableDataService:TableDataService, public authService:AuthService) {
@@ -36,16 +36,16 @@ export class DataShowTypeComponent{
   }
   onOk() {
     let status = 0
-    if (this.payed == this.dueAmount)
+    if (+this.payed == this.dueAmount)
       status = 1
     let realPay = this.payed
-    this.payed += this.valueOfLinkedField
+    this.payed = (+this.payed + this.valueOfLinkedField).toString()
     let payedData = { doc_id: this.record.doc_id, payed: this.payed, debt_status: status, realPay: realPay }
     this.messageEvent.emit(payedData)
   }
   changePayed() {
     if (+this.payed > this.dueAmount){
-       this.payed = this.dueAmount
+       this.payed = this.dueAmount.toString()
       this.tableDataService.createMessage("warning","لا يمكن ادخال مبلغ اكبر من المستحق")
     }
   }

@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {TableDataService} from "../../components/table-data/table-data.service";
 import {AuthService} from "../../services/auth.service";
 import {ImagesGridService} from "../../components/table-data/images-grid/images-grid.service";
+import {Router} from "@angular/router";
+import {priceFormat} from "../../common/math";
 
 @Component({
   selector: 'app-pos',
@@ -10,9 +12,13 @@ import {ImagesGridService} from "../../components/table-data/images-grid/images-
 })
 export class PosComponent implements OnInit{
   categoryId:string = '';
-  constructor(public dataService:TableDataService, public authService:AuthService, public imagesGridService:ImagesGridService) {
+  nzSelectStatusError = false
+  constructor(private router: Router,public dataService:TableDataService, public authService:AuthService, public imagesGridService:ImagesGridService) {
     this.time = null as any
   }
+  isIncoming = () => this.router.url == "/incoming"
+  getPriceKeyItem = () => this.isIncoming()? "cost":"price"
+  getProductName = (product:any) => product.category_id.name+" "+product.size
   receiveMessage($event:any) {
     this.categoryId = $event
   }
@@ -32,9 +38,13 @@ export class PosComponent implements OnInit{
   receiptNo: string = ""
   receiptDate: string = ""
   async loadProducts() {
+    let where = ""
+    if (!this.isIncoming()){
+      where = "quantity > 0"
+    }
     let body = {
       table: 'products',
-      where:"quantity > 0",
+      where: where,
       foreignFields: [
         { field: "category_id", table:"categories"},
         { field:"unit_id",table:"units" },
@@ -47,7 +57,7 @@ export class PosComponent implements OnInit{
     })
   }
   async loadUsers() {
-    let body = {table: 'users'}
+    let body = {table: 'users', where: ` role = ${+this.isIncoming()?'2':'3'} ` }
     this.dataService.getData(body).subscribe(res=>{
       console.log(res)
       this.users = res;
@@ -69,13 +79,13 @@ export class PosComponent implements OnInit{
         doc_id: product.doc_id,
         image: product.product_image,
         category: product.category_id.name,
-        name: product.name,
-        price: product.price,
+        name: this.getProductName(product),
+        price: product[this.getPriceKeyItem()],
         option: product.option,
         qty: 1,
       });
     } else {
-      if (+this.products[index].quantity > +this.cart[index].qty){
+      if (+this.products[index].quantity > +this.cart[index].qty || this.isIncoming()){
          this.cart[index].qty += 1;
       }else {
         this.cart[index].qty = +this.products[index].quantity;
@@ -92,7 +102,7 @@ export class PosComponent implements OnInit{
       event.target.value = 1;
       quantity = 1
     }
-    if (+this.products[index].quantity > +quantity){
+    if (+this.products[index].quantity > +quantity || this.isIncoming()){
       this.cart[index].qty = +quantity;
     }else {
       event.target.value = +this.products[index].quantity;
@@ -118,7 +128,7 @@ export class PosComponent implements OnInit{
       if (qty < 0){
         this.cart[index].qty = afterAdd;
       }else {
-        if (+this.products[index].quantity > +this.cart[index].qty){
+        if (+this.products[index].quantity > +this.cart[index].qty || this.isIncoming()){
           this.cart[index].qty = afterAdd;
         }else {
           this.cart[index].qty = +this.products[index].quantity;
@@ -136,7 +146,7 @@ export class PosComponent implements OnInit{
     return this.cart.reduce((count, item) => count + item.qty, 0);
   }
   getTotal() {
-    return this.priceFormat( this.getTotalPrice() -  this.discount) ;
+    return priceFormat( this.getTotalPrice() -  this.discount) ;
   }
   updateDiscount() {
     // const value = e.target
@@ -163,6 +173,7 @@ export class PosComponent implements OnInit{
       total: total,
       discount: this.discount,
       pay_type: this.saleArgs.paymentType,
+      incoming: this.isIncoming()?1:0
     }
     let innerItemData:any[] = []
     let innerItemData2:any[] = []
@@ -178,25 +189,48 @@ export class PosComponent implements OnInit{
     body.innerItem = {table:"sales_items",data: innerItemData };
     if (+body.pay_type == 2){
       body.innerItem2 = {
-        table:"debts",
-        data: {
-          client_id: this.saleArgs.clientId,
-          money_value: total - this.discount,
-          income: 1,
-        }
+          table:"debts",
+          where: { field:"client_id", value:"client_id"},
+          data: {
+            client_id: "client_id",
+            money_value: "total",
+            income: this.isIncoming()?1:0
+          }
       }
     }
-    console.log(body)
-    this.dataService.saveData(
-      'sales',
-      true,
-      body,
-      true
-    ).subscribe((res)=>{
-      console.log(res)
-      this.isShowModalReceipt = true;
-      //close focusing input
-    })
+    if (!body.client_id && this.isIncoming() && body.pay_type == 2){
+      this.nzSelectStatusError = true
+      this.dataService.createMessage('error',"قم باختيار مورد")
+    }else {
+      this.dataService.saveData(
+        'sales',
+        true,
+        body,
+        true
+      ).subscribe((res:any)=>{
+        if (res.msg == true){
+          if (this.isIncoming()){
+            this.dataService.createMessage('success',`تمت العملية بنجاح`)
+            this.router.navigate(["/incoming-management"])
+          }else {
+            this.isShowModalReceipt = true;
+          }
+        }else {
+          if (res.msg == "Session Error"){
+            this.dataService.createMessage('error',"خطا في الجلسة، قم باعادة تسجيل الدخول")
+          }else {
+            this.dataService.createMessage('error',res?.content)
+          }
+        }
+      })
+    }
+  }
+  //Select Client
+  supplierSelect(event:any){
+    console.log(event)
+    if (!event && this.saleArgs.clientId){
+        this.nzSelectStatusError = false
+    }
   }
   closeModalReceipt() {
     this.isShowModalReceipt = false;
@@ -204,15 +238,6 @@ export class PosComponent implements OnInit{
   dateFormat(date:Date) {
     const formatter = new Intl.DateTimeFormat('id', { dateStyle: 'short', timeStyle: 'short'});
     return formatter.format(date);
-  }
-  numberFormat(number:number) {
-    return (number || "")
-      .toString()
-      .replace(/^0|\./g, "")
-      .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
-  }
-  priceFormat(number:number) {
-    return number ? ` ${this.numberFormat(number)} جنيه ` : ``;
   }
   clear() {
     this.discount = 0;
@@ -222,10 +247,10 @@ export class PosComponent implements OnInit{
     this.clearSound();
   }
   beep() {
-    this.playSound("../assets/sound/beep-29.mp3");
+    this.playSound("./assets/sound/beep-29.mp3");
   }
   clearSound() {
-    this.playSound("../assets/sound/button-21.mp3");
+    this.playSound("./assets/sound/button-21.mp3");
   }
   playSound(src:any) {
     const sound = new Audio();
@@ -257,5 +282,7 @@ export class PosComponent implements OnInit{
     // TODO save sale data to database
     this.clear();
   }
+
+  priceFormat = (price:number) => priceFormat(price);
 }
 

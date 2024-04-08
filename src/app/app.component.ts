@@ -13,14 +13,18 @@ export class AppComponent {
     console.log(this.router.url)
   }
   isCollapsed = false;
-  title!: "School System";
+  title!: "Sales System";
   sideBarList: any[] = new DataSources().pagesDataTable;
   getRoute = () => this.router.url
   logged = () => this.router.url == '/login'
+  isNotPos = () => this.getRoute() != '/pos' && this.getRoute() != '/incoming'
   checkRoute(){
     console.log(this.router.url)
     switch (this.router.url) {
       case "/pos":
+        this.isCollapsed = true;
+        break;
+      case "/incoming":
         this.isCollapsed = true;
         break;
       default:

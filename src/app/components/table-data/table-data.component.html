@@ -1,20 +1,30 @@
 <br />
 <div class="font-bold">{{pageTitle}}</div>
-<div *ngIf="showAddButton()">
-  <button nz-button (click)="checkEditing()?saveEdit(editingObject.recordId):
+<div class="row">
+  <div *ngIf="showAddButton()">
+    <button nz-button (click)="checkEditing()?submitForm():
     tableData.customAddButton?routeTo(tableData.customAddButton.routTo):
     tableData.modelAddType?
     showModal():addRow()"
-          nzType="primary">
-    {{checkEditing()?"تحديث":"اضافة جديد"}}
-    <span nz-icon nzType="{{checkEditing()?'edit':'plus'}}" nzTheme="outline"
-          style="font-size: 16px;color: #ffffff;"></span>
-  </button>
-<br />
+            nzType="primary">
+      {{checkEditing()?"تحديث":"اضافة جديد"}}
+      <span nz-icon nzType="{{checkEditing()?'edit':'plus'}}" nzTheme="outline"
+            style="font-size: 16px;color: #ffffff;"></span>
+    </button>
+    <br />
+  </div>
+  <div *ngIf="tableData?.searchable" class="mr-20">
+    <nz-input-group [nzSuffix]="suffixIconSearch">
+      <input (keyup)="inputSearchChange()" [(ngModel)]="searchValue" type="text" nz-input placeholder="ابحث عن مورد / عميل" />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <span nz-icon nzType="search"></span>
+    </ng-template>
+  </div>
 </div>
 <br />
 <nz-table nzLoading="{{tableLoading}}" #editRowTable nzBordered
-          [nzData]="listOfData" [nzPageSize]="10" [nzScroll]="{ y: '350px' }">
+          [nzData]="filteredListOfData()" [nzShowPagination]="pagination" [nzPageSize]="10" [nzScroll]="{ y: '55vh' }">
   <thead>
   <tr>
     <th *ngFor="let item of tableData.headers">
@@ -24,7 +34,7 @@
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let data of listOfData">
+  <tr *ngFor="let data of filteredListOfData()">
     <ng-container *ngIf="!editCache[data.doc_id!].edit; else editTemplate">
       <td (dblclick)="checkActionButtons(data)?startEdit(data.doc_id):null" *ngFor="let keyItem of keysEditModel; let i = index">
         <app-data-show-type
@@ -57,7 +67,7 @@
     </ng-container>
     <ng-template #editTemplate>
       <td class="p-all-0" *ngFor="let keyItem of keysEditModel; let i = index">
-        <form [formGroup]="form" (ngSubmit)="saveEdit(editingObject.recordId)">
+        <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
           <app-data-edit-type
             [header]="tableData.headers![i]"
             [value]="editCache[data.doc_id!].data[keyItem]"
@@ -85,7 +95,8 @@
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
       <nz-form-item *ngFor="let keyItem of keysEditModel; let i = index">
-        <nz-form-label *ngIf="!tableData.headers![i].disabled" [nzSpan]="5" nzRequired nzFor="{{keyItem}}">{{tableData.headers![i].name}}</nz-form-label>
+        <nz-form-label *ngIf="!tableData.headers![i].disabled" [nzSpan]="5"
+                       nzRequired nzFor="{{keyItem}}">{{tableData.headers![i].name}}</nz-form-label>
         <nz-form-control *ngIf="!tableData.headers![i].disabled" [nzSpan]="12" nzErrorTip="الحقل مهم!">
           <app-data-edit-type
             [header]="tableData.headers![i]"

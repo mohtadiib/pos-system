@@ -2,8 +2,9 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {TableDataService} from "../../components/table-data/table-data.service";
 import {Router} from "@angular/router";
 import DataSources from "../../common/data_sources/data-sources";
-import { getDay,getMonth,getYear } from 'date-fns';
 import {TableDataComponent} from "../../components/table-data/table-data.component";
+import { NonNullableFormBuilder } from "@angular/forms";
+import { priceFormat } from 'src/app/common/math';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,6 +12,7 @@ import {TableDataComponent} from "../../components/table-data/table-data.compone
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit{
+
   @ViewChild(TableDataComponent) tableDataComponent: TableDataComponent | undefined
   sideBarList: any[] = new DataSources().pagesDataTable;
   reportObject: any = {}
@@ -20,13 +22,13 @@ export class DashboardComponent implements OnInit{
   currentDate: Date = new Date()
   body:any = {
     dashboard:[
-      {table:"sales", sumField:"total", where:"", type: "all_sales", title: "اجمالي المبيعات", icon:"file-text" },
-      {table:"sales", sumField:"total", where:" pay_type = 2", type: "debts_sales", title: "مبيعات بالدين", icon:"file-done" },
-      {table:"incoming", sumField:"total_cost", where:"", type: "all_incoming", title: "الوارد", icon:"file-done" },
+      {table:"sales", sumField:"total", where:" incoming = 0 ", type: "all_sales", title: "اجمالي المبيعات", icon:"file-text" },
+      {table:"sales", sumField:"total", where:" incoming = 0 and pay_type = 2 ", type: "debts_sales", title: "مبيعات بالدين", icon:"file-done" },
+      {table:"sales", sumField:"total", where:" incoming = 1 ", type: "all_incoming", title: "الوارد", icon:"file-done" },
       {table:"products", type: "all_products", title: "عدد الاصناف", icon:"pic-center" },
       {table:"products", where: " minimum_qty > quantity", type: "products_minimum_quantity", title: "اصناف قاربت على الانتهاء", icon:"pic-center" },
       {table:"outputs", sumField:"moneyValue", where:" status != 2 ", type: "all_outputs", title: "المنصرفات", icon:"pic-center" },
-      // {table:"debts", sumField:"money_value", where:"", type: "all_debts", title: "الديون", icon:"pic-center" },
+      {table:"debts", sumField:"money_value", where:"", type: "all_debts", title: "الديون", icon:"pic-center" },
       {table:"final_money", type: "all_transactions", title: "المبلغ المتوفر", icon:"pic-center" },
     ]
   }
@@ -34,7 +36,7 @@ export class DashboardComponent implements OnInit{
   tables:any = {}
   reportPage:boolean = this.router.url === '/report'
   date :any[] = [];
-  constructor(private dataService:TableDataService,
+  constructor(private fb: NonNullableFormBuilder,private dataService:TableDataService,
               private router: Router) {}
   getData(){
     this.tables.values = []
@@ -61,9 +63,6 @@ export class DashboardComponent implements OnInit{
     this.reportObject = this.sideBarList.find(value => value.path == modelListFilter).tableData
     this.reportObject.customCrud = []
     this.reportObject.customApiBody.where = where
-    if (this.reportPage){
-      this.reportObject.customApiBody.limit = ""
-    }
   }
    setFilter(filter:string,where:any = null,index:number = 0){
      this.mainReports = false
@@ -104,7 +103,7 @@ export class DashboardComponent implements OnInit{
     })
     this.reportObject.customApiBody.backUpWhere = this.reportObject.customApiBody?.where
     this.reportObject.customApiBody.where =  this.setDateFilter(this.getListFilterDates(result),this.reportObject.customApiBody.where)
-    this.getData()
+    this.reportObject.customApiBody.limit = 5
     this.tableDataComponent?.getData()
   }
 
@@ -134,5 +133,6 @@ export class DashboardComponent implements OnInit{
       value.where = value?.backUpWhere
     })
   }
+  priceFormat = (price:number) => priceFormat(price);
 
 }

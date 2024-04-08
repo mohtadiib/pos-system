@@ -3,7 +3,7 @@
     <div class="sidebar-logo">
       <a href="https://ng.ant.design/" target="_blank">
 <!--        <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo">-->
-        <h1 *ngIf="getRoute() != '/pos'">Sales System</h1>
+        <h1 *ngIf="isNotPos()">Sales System</h1>
       </a>
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline">
@@ -15,11 +15,11 @@
     </ul>
     <button (click)="authService.logout()" nz-button nzType="text" nzDanger>
       <span nz-icon nzType="logout"></span>
-      <span *ngIf="getRoute() != '/pos'">تسجل خروج</span>
+      <span *ngIf="isNotPos()">تسجل خروج</span>
     </button>
   </nz-sider>
   <nz-layout>
-    <nz-header *ngIf="getRoute() != '/pos' && !logged()">
+    <nz-header *ngIf="isNotPos() && !logged()">
       <div class="app-header">
         <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
             <span class="trigger"
@@ -37,7 +37,7 @@
       </div>
     </nz-header>
     <nz-content>
-      <div [class]="getRoute() == '/pos'?'inner-content-pos':'inner-content'">
+      <div [class]="!isNotPos()?'inner-content-pos':'inner-content'">
          <router-outlet></router-outlet>
       </div>
     </nz-content>

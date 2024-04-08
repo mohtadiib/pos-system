@@ -1,5 +1,12 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {FormGroup, ControlContainer, FormGroupDirective, FormControl} from '@angular/forms';
+import {
+  FormGroup,
+  ControlContainer,
+  FormGroupDirective,
+  FormControl,
+  Validators,
+  NonNullableFormBuilder
+} from '@angular/forms';
 import {TableDataService} from "../table-data.service";
 import {ImagesGridService} from "../images-grid/images-grid.service";
 
@@ -23,8 +30,15 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
   @Output() setSizeField = new EventEmitter<any>()
   form!: FormGroup;
   choicesList: any[] = []
-  constructor(private parent: FormGroupDirective, public tableDataService:TableDataService, public imagesGridService: ImagesGridService) {}
+  constructor(
+    private parent: FormGroupDirective,
+    public tableDataService:TableDataService,
+    public imagesGridService: ImagesGridService
+  ) {}
   ngOnInit() {
+    this.setFormControllers()
+  }
+  setFormControllers(){
     this.form = this.parent.form;
     if (this.form.get(this.keyItem)){
       if (this.header?.type == 'online_list') {
@@ -41,7 +55,7 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
       }else if (this.header?.type == 'image_view') {
         this.form.addControl(this.keyItem, new FormControl(`${this.tableDataService.selectedImage.image}`));
       }else {
-        this.form.addControl(this.keyItem, new FormControl(this.value));
+        this.form.addControl(this.keyItem, new FormControl(this.value,this.header?.validators?.values));
       }
     }
     this.getInnerTableData()

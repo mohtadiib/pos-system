@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { ar_EG } from 'ng-zorro-antd/i18n';
-import {NgOptimizedImage, registerLocaleData} from '@angular/common';
+import {HashLocationStrategy, LocationStrategy, NgOptimizedImage, registerLocaleData} from '@angular/common';
 import ar from '@angular/common/locales/ar';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -65,6 +65,7 @@ registerLocaleData(ar);
     providers: [
         {provide: NZ_I18N, useValue: ar_EG},
         NzMessageService,
+      {provide: LocationStrategy, useClass: HashLocationStrategy}
     ],
     exports: [],
     bootstrap: [AppComponent]

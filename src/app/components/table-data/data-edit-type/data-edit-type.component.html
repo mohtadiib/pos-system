@@ -1,30 +1,34 @@
-<div style="background-color: #fffff0;cursor: pointer" *ngIf="header?.type == 'image_view' && !tableDataService.selectedImage?.image" (click)="showModal()" nz-button nzType="default">
-  <span nz-icon nzType="edit"></span>
-  حدد صورة
-</div>
-<div (click)="showModal()" class="small-image-container"
-     *ngIf="header?.type == 'image_view' && tableDataService.selectedImage?.image">
-  <span nz-icon nzType="edit"></span>
-  <img class="small-image" src="{{imagesGridService.imageUrl+tableDataService.selectedImage.image}}" alt="image">
-</div>
-<input #input [hidden]="header.hidden" *ngIf="header?.type == '' || header?.type == 'list' || header?.type == 'get_online_list' "
-       [placeholder]="value == undefined?0:''"
-       type="text" nz-input
-       [formControlName] = "keyItem"
-       (keyup)="inputChange($event)"
-/>
-<div class="text-center" *ngIf="header?.hidden">{{form.get(keyItem)?.value}}</div>
-<nz-select
-  (nzOpenChange)="setPrice($event)"
-  *ngIf="header?.type == 'tag' || header?.type == 'fill_tag' || header?.type == 'online_list' || header?.type == 'tags_list'"
-  [formControlName] = "keyItem"
->
-<!--                       nzValue="{{this.header?.type == 'online_list'?item.doc_id:item.value}}"-->
-<nz-option *ngFor="let item of getChoicesList()"
-           nzValue="{{this.header?.type == 'online_list'?item.doc_id:item.value}}"
-           nzLabel="{{item.name}}"
-></nz-option>
-</nz-select>
+<nz-form-item>
+  <nz-form-control [nzErrorTip]="this.header?.validators?.error">
+    <div style="background-color: #fffff0;cursor: pointer" *ngIf="header?.type == 'image_view' && !tableDataService.selectedImage?.image" (click)="showModal()" nz-button nzType="default">
+      <span nz-icon nzType="edit"></span>
+      حدد صورة
+    </div>
+    <div (click)="showModal()" class="small-image-container"
+         *ngIf="header?.type == 'image_view' && tableDataService.selectedImage?.image">
+      <span nz-icon nzType="edit"></span>
+      <img class="small-image" src="{{imagesGridService.imageUrl+tableDataService.selectedImage.image}}" alt="image">
+    </div>
+    <input #input [hidden]="header.hidden" *ngIf="header?.type == '' || header?.type == 'list' || header?.type == 'get_online_list' "
+           [placeholder]="value == undefined?0:''"
+           type="text" nz-input
+           [formControlName] = "keyItem"
+           (keyup)="inputChange($event)"
+    />
+    <div class="text-center" *ngIf="header?.hidden">{{form.get(keyItem)?.value}}</div>
+    <nz-select
+      (nzOpenChange)="setPrice($event)"
+      *ngIf="header?.type == 'tag' || header?.type == 'fill_tag' || header?.type == 'online_list' || header?.type == 'tags_list'"
+      [formControlName] = "keyItem"
+    >
+      <!--                       nzValue="{{this.header?.type == 'online_list'?item.doc_id:item.value}}"-->
+      <nz-option *ngFor="let item of getChoicesList()"
+                 nzValue="{{this.header?.type == 'online_list'?item.doc_id:item.value}}"
+                 nzLabel="{{item.name}}"
+      ></nz-option>
+    </nz-select>
+  </nz-form-control>
+</nz-form-item>
 
 
 

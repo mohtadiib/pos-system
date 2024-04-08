@@ -64,8 +64,8 @@
                   <img class="img-item" src="{{imagesGridService.imageUrl+product.product_image}}" alt="{{product.name}}">
                   <p class="center" [textContent]="product.size+' متر '"></p>
                   <div class="flex pb-3 px-3 text-sm mt-1">
-                    <p class="flex-grow truncate mr-1" [textContent]="product.name"></p>
-                    <p class="nowrap font-semibold" [textContent]="priceFormat(product.price)"></p>
+                    <p class="flex-grow truncate mr-1" [textContent]="getProductName(product)"></p>
+                    <p class="nowrap font-semibold" [textContent]="priceFormat(product[getPriceKeyItem()])"></p>
                   </div>
 <!--                  {{product.quantity}}-->
                 </div>
@@ -82,10 +82,12 @@
           <div
             class="flex font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
           >
-            <div class="text-blue-gray-200 pt-1">العميل</div>
+            <div class="text-blue-gray-200 pt-1">{{isIncoming()?'المورد':'العميل'}}</div>
             <div class="mr-52 w-full">
               <nz-select
+                (nzOpenChange)="supplierSelect($event)"
                 [(ngModel)]="saleArgs.clientId"
+                [nzStatus]="nzSelectStatusError?'error':''"
               >
                 <nz-option *ngFor="let user of users"
                            nzValue="{{user.doc_id}}"
@@ -129,8 +131,8 @@
                 <div class="select-none mb-3 bottom-border rounded-lg w-full text-blue-gray-700 py-2 px-2 flex justify-center">
                   <img src="{{imagesGridService.imageUrl+item.image}}" alt="" class="rounded-lg h-10 w-10 bg-white shadow ml-2">
                   <div class="flex-grow">
-                    <h5 class="text-sm" >{{item.category+" - "+item.name}}</h5>
-                    <p class="text-xs block" >{{priceFormat(item.price)}}</p>
+                    <h5 class="text-sm" >{{item.name}}</h5>
+                    <p class="text-xs block" >{{priceFormat(item[getPriceKeyItem()])}}</p>
                   </div>
                   <div class="py-1">
                     <div class="w-40 grid grid-cols-3 gap-2 ml-2">
@@ -207,7 +209,7 @@
                     [disabled]="!submitable()"
                     (click)="submit()"
             >
-              دفع
+              موافق
             </button>
           </div>
           <!-- end of payment info -->
@@ -269,10 +271,10 @@
                 <td class="py-2 text-right">
                   <span [textContent]="item.name"></span>
                   <br/>
-                  <small [textContent]="priceFormat(item.price)"></small>
+                  <small [textContent]="priceFormat(item[getPriceKeyItem()])"></small>
                 </td>
                 <td class="py-2 text-center" [textContent]="item.qty"></td>
-                <td class="py-2 text-left" [textContent]="priceFormat(item.qty * item.price)"></td>
+                <td class="py-2 text-left" [textContent]="priceFormat(item.qty * item[getPriceKeyItem()])"></td>
               </tr>
               </tbody>
             </table>

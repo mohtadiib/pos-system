@@ -1,5 +1,6 @@
 
-const SERVER_URL = "http://127.0.0.1/"
+const SERVER_URL = "http://localhost/"
+// const SERVER_URL = "http://192.168.1.34/"
 export const GlobalVariable = Object.freeze({
   // BASE_API_URL: 'https://alaman-qa.com/last/php/',
   // BASE_API_URL: 'http://127.0.0.1:8888/alaman/php/',

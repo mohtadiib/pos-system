@@ -28,5 +28,6 @@ export interface TableData {
   modelAddType?:boolean
   customAddButton?:any
   actionButtons?:any
+  searchable?:any
 }
 
