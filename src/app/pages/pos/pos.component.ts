@@ -13,12 +13,13 @@ import {priceFormat} from "../../common/math";
 export class PosComponent implements OnInit{
   categoryId:string = '';
   nzSelectStatusError = false
+  linkWithStock: boolean = false
   constructor(private router: Router,public dataService:TableDataService, public authService:AuthService, public imagesGridService:ImagesGridService) {
     this.time = null as any
   }
   isIncoming = () => this.router.url == "/incoming"
   getPriceKeyItem = () => this.isIncoming()? "cost":"price"
-  getProductName = (product:any) => product.category_id.name+" "+product.size
+  getProductName = (product:any) => product.category_id.name
   receiveMessage($event:any) {
     this.categoryId = $event
   }
@@ -40,7 +41,7 @@ export class PosComponent implements OnInit{
   async loadProducts() {
     let where = ""
     if (!this.isIncoming()){
-      where = "quantity > 0"
+      // where = "quantity > 0"
     }
     let body = {
       table: 'products',
@@ -57,7 +58,7 @@ export class PosComponent implements OnInit{
     })
   }
   async loadUsers() {
-    let body = {table: 'users', where: ` role = ${+this.isIncoming()?'2':'3'} ` }
+    let body = {table: 'users', where: ` role = ${+this.isIncoming()?'2':'2'} ` }
     this.dataService.getData(body).subscribe(res=>{
       console.log(res)
       this.users = res;
@@ -85,7 +86,7 @@ export class PosComponent implements OnInit{
         qty: 1,
       });
     } else {
-      if (+this.products[index].quantity > +this.cart[index].qty || this.isIncoming()){
+      if (+this.products[index].quantity > +this.cart[index].qty || this.isIncoming() || !this.linkWithStock){
          this.cart[index].qty += 1;
       }else {
         this.cart[index].qty = +this.products[index].quantity;
@@ -102,7 +103,7 @@ export class PosComponent implements OnInit{
       event.target.value = 1;
       quantity = 1
     }
-    if (+this.products[index].quantity > +quantity || this.isIncoming()){
+    if (+this.products[index].quantity > +quantity || this.isIncoming() || !this.linkWithStock){
       this.cart[index].qty = +quantity;
     }else {
       event.target.value = +this.products[index].quantity;

@@ -62,7 +62,7 @@
                   (click)="addToCart(product)"
                 >
                   <img class="img-item" src="{{imagesGridService.imageUrl+product.product_image}}" alt="{{product.name}}">
-                  <p class="center" [textContent]="product.size+' متر '"></p>
+<!--                  <p class="center" [textContent]="product.size+' متر '"></p>-->
                   <div class="flex pb-3 px-3 text-sm mt-1">
                     <p class="flex-grow truncate mr-1" [textContent]="getProductName(product)"></p>
                     <p class="nowrap font-semibold" [textContent]="priceFormat(product[getPriceKeyItem()])"></p>

@@ -109,215 +109,6 @@ class DataSources{
       }
     },
     {
-      title: "الوارد",
-      icon:"pie-chart",
-      router: "/incoming",
-      path:"incoming",
-      component: PosComponent
-      // tableData: {
-      //   // modelAddType:true,
-      //   router: { main:"/income" },
-      //   customApiBody: {
-      //     table:"incoming",
-      //     foreignFields: [
-      //       {field:"supplier_id",table:"users"},
-      //       {field:"product_id",table:"products"},
-      //     ],
-      //     innerItem2: {
-      //       conditionFiled: { pay_type: 2 },
-      //       table:"debts",
-      //       where: { field:"client_id", value:"supplier_id"},
-      //       data: {
-      //         client_id: "supplier_id",
-      //         money_value: "total_cost"
-      //       }
-      //     }
-      //   },
-      //   headers: [
-      //     { name: "الرقم", type: "", hidden: true },
-      //     { name: "المورد", type: "online_list", innerTableName: "users", where: " role = 2 " },
-      //     { name: "العنصر", type: "online_list", innerTableName: "products" },
-      //     {
-      //       name: "الكمية",
-      //       type: "",
-      //       validators: {
-      //       error: "الكمية من 1 الى 1000",
-      //         values: [
-      //           Validators.required,
-      //           Validators.min(1),
-      //           Validators.max(1000)
-      //         ]
-      //       }
-      //     },
-      //     {
-      //       name: "التكلفة",
-      //       type: "",
-      //       validators: {
-      //         error: "التكلفة من جنيه الى مليار",
-      //         values: [
-      //           Validators.required,
-      //           Validators.min(1),
-      //           Validators.max(100000000000)
-      //         ]
-      //       }
-      //     },
-      //     { name: "الدفع", type: "tags_list",
-      //       values:[
-      //         { name:'كاش',  value:'0', color:'#71b649' },
-      //         { name:'بنكك', value:'1', color:'#deae47' },
-      //         { name:'دين',  value:'2', color:'#888888' },
-      //       ]
-      //     },
-      //     { name: "الحالة", type: "tags_list",
-      //       values: [
-      //         { name:'لم يتم', value:'0', color:'#737373'},
-      //         { name:'تم',     value:'1', color:'#45ce00'},
-      //         { name:'ملغي',   value:'2', color:'#ff0000'},
-      //       ]
-      //     },
-      //     { name: "تاريخ الإنشاء", type: "", disabled: true },
-      //     { name: "تاريخ التعديل", type: "", disabled: true },
-      //   ],
-      //   model:{
-      //     doc_id: '',
-      //     supplier_id: '',
-      //     product_id: '',
-      //     quantity: '',
-      //     total_cost: '',
-      //     pay_type: '0',
-      //     status: '1',
-      //     created_at: Date.now(),
-      //     updated_at: Date.now(),
-      //   }
-      // },
-      // permissions:[2]
-    },
-    {
-      title: "ادارة الوارد",
-      router: "/incoming-management",
-      path:"incoming-management",
-      icon:'shopping-cart',
-      tableData:{
-        router: { main:"/incoming-management"},
-        customApiBody:{
-          table:"sales",
-          foreignFields: [
-            {field:"client_id",table:"users"},
-            {field:"user_id",table:"users"}
-          ],
-          inner_tables:{foreignField:"sale_id",tables:["sales_items"],"get_length":true},
-          where: " incoming = 1 "
-        },
-        customCrud:["return"],
-        headers: [
-          { name: "الرقم", type: "", hidden: true },
-          { name: "المورد", type: "online_list" },
-          { name: "الموظف", type: "online_list" },
-          { name: "التكلفة", type: "" },
-          { name: "التخفيض", type: "" },
-          { name: "الدفع", type: "tags_list",
-            values:[
-              {name:'كاش',value:'0',color:'#71b649'},
-              {name:'بنكك',value:'1',color:'#deae47'},
-              {name:'دين',value:'2',color:'#888888'},
-            ]
-          },
-          { name: "الحالة", type: "tags_list",
-            values: [
-              {name:'لم يتم',value:'0',color:'#737373'},
-              {name:'تم',value:'1',color:'#45ce00'},
-              {name:'ملغي',value:'2',color:'#ff0000'},
-            ]
-          },
-          { name: "التاريخ", type: "", hidden: true },
-          { name: "الاصناف", type: "list",
-            innerModel: {
-              title: "الاصناف",
-              router: { main:"/sales_items"},
-              customApiBody: {
-                table:"sales_items",
-                foreignField: {sale_id:""},
-                foreignFields: [{field:"product_id",table:"products"}],
-                withAdmin: true
-              },
-              customCrud:[],
-              headers: [
-                { name: "الرقم", type: "", hidden: true },
-                { name: "اسم المنتج", type: "online_list", innerTableName: "products" },
-                { name: "الكمية", type: "" },
-              ],
-              model:{
-                doc_id: '',
-                product_id: '',
-                quantity: '',
-              }
-            }
-          },
-        ],
-        model: {
-          doc_id: '',
-          client_id: '',
-          user_id: '',
-          total: '',
-          discount: '',
-          pay_type: '0',
-          status: '0',
-          created_at: '0',
-          sales_items: undefined,
-        }
-      }
-    },
-    {
-      title: "الديون",
-      router: "/debts",
-      path:"debts",
-      icon:'switcher',
-      tableData: {
-        router: { main:"/debts"},
-        customApiBody:{
-          table:"debts",
-          foreignFields:[{field:"user_id",table:"users"},{field:"client_id",table:"users"}],
-        },
-        headers: [
-          { name: "الرقم", type: "", hidden: true },
-          { name: "دائن / مدين", type: "icons_list",
-            values:[
-              {name:'مدين',value:'0',color:'#ff0000',icon:"arrow-up"},
-              {name:'دائن',value:'1',color:'#27a100',icon:"arrow-down"},
-            ],
-            disabled: true
-          },
-          { name: "المبلغ", type: "", completeModel: {title: "دفع الدين",placeholder:"ادخل المبلغ المدفوع", keyOfLinkedField:"payed"} },
-          { name: "المدفوع", type: "", disabled: true},
-          { name: "رقم العملية", type: "", disabled: true },
-          { name: "الموظف", type: "online_list", innerTableName: "users", disabled: true },
-          { name: "العميل / المورد", type: "online_list", innerTableName: "users" },
-          { name: "الحالة", type: "tags_list",
-            values:[
-              {name:'غير مسدد',value:'0',color:'#a9a9a9'},
-              {name:'مسدد',value:'1',color:'#27a100'},
-              {name:'ملغي',value:'2',color:'#ff0000'}
-            ],
-          },
-          { name: "الانشاء", type: "", disabled: true  },
-          { name: "التعديل", type: "", disabled: true  },
-        ],
-        searchable: { keyFilter: "client_id"},
-        model:{
-          doc_id: '',
-          income: '0',
-          money_value: '',
-          payed: '',
-          sale_id: '',
-          user_id: '',
-          client_id: '',
-          debt_status: '',
-          created_at: Date.now(),
-          updated_at: Date.now(),
-        }
-      }
-    },
-    {
       title: "المنصرفات",
       router: "/outputs",
       path:"outputs",
@@ -373,7 +164,7 @@ class DataSources{
       }
     },
     {
-      title: "المقاسات",
+      title: "المنتجات",
       router: "/products",
       path:"products",
       icon:'compress',
@@ -392,43 +183,43 @@ class DataSources{
           { name: "الرقم", type: "", hidden: true },
           { name: "الفئة", type: "online_list", innerTableName: "categories",  categoryPrice: true },
           // { name: "الفئة", type: "online_list", innerTableName: "categories", categoryPrice: true, setField: "name" },
-          // { name: "المنتج", type: "", hidden: true },
+          { name: "المنتج", type: "" },
           // { name: "المقاس", type: "", categoryPrice: { keyItem: "price" }, setField: "name",
-          { name: "المقاس", type: "", categoryPrice: { keyItem: "cost" },
-            validators: {
-              error: "المقاس من 1 الى 3",
-              values: [
-                Validators.required,
-                Validators.min(1),
-                Validators.max(3)
-              ]
-            }
-          },
+          // { name: "المقاس", type: "", categoryPrice: { keyItem: "cost" },
+          //   validators: {
+          //     error: "المقاس من 1 الى 3",
+          //     values: [
+          //       Validators.required,
+          //       Validators.min(1),
+          //       Validators.max(3)
+          //     ]
+          //   }
+          // },
           { name: "الوحدة", type: "online_list", innerTableName: "units" },
-          { name: "التكلفة", type: "", hidden: true},
+          // { name: "التكلفة", type: ""},
           { name: "السعر", type: ""},
-          { name: "الكمية", type: "", hidden: true },
-          { name: "اقل كمية", type: "" },
+          // { name: "الكمية", type: "", hidden: true },
+          // { name: "اقل كمية", type: "" },
           { name: "الصورة", type: "image_view" },
           { name: "الحالة", type: "tag", values:[{name:'معلق',value:'0'}, {name:'نشط',value:'1'}]},
         ],
         model: {
           doc_id: '',
           category_id: '',
-          // name: '',
-          size: '',
+          name: '',
+          // size: '',
           unit_id: '',
-          cost: '',
+          // cost: '',
           price: '',
-          quantity: '',
-          minimum_qty: '',
+          // quantity: '',
+          // minimum_qty: '',
           product_image: '',
           active: '1',
         }
       }
     },
     {
-      title: "الأصناف",
+      title: "التصنيفات",
       router: "/categories",
       path:"categories",
       icon:'border-inner',
@@ -438,14 +229,14 @@ class DataSources{
         headers: [
           { name: "الرقم", type: "", hidden: true },
           { name: "اسم الفئة", type: "" },
-          { name: "سعر المتر", type: "" },
+          // { name: "سعر المتر", type: "" },
           { name: "الصورة", type: "image_view" },
           { name: "الحالة", type: "tag", values:[{name:'نشط',value:'1'}, {name:'معلق',value:'0'}]},
         ],
         model:{
           doc_id: '',
           name: '',
-          price: '',
+          // price: '',
           category_image: '',
           active: '1',
         }
@@ -494,8 +285,8 @@ class DataSources{
             values:[
               {name:'مبيعات',value:'0',color:'#1388c7'},
               {name:'مدير',value:'1',color:'#deae47'},
-              {name:'مورد',value:'2',color:'#6c6c6c'},
-              {name:'عميل',value:'3',color:'#27a12b'},
+              // {name:'مورد',value:'2',color:'#6c6c6c'},
+              {name:'عميل',value:'2',color:'#27a12b'},
             ]
           },
           { name: "الحالة", type: "tag", values:[{name:'معلق',value:'0'}, {name:'نشط',value:'1'}]},
@@ -531,53 +322,264 @@ class DataSources{
         }
       }
     },
-    {
-      title: "العمليات",
-      router: "/transactions",
-      path:"transactions",
-      icon:'swap',
-      tableData: {
-          title: "العمليات",
-          router: { main:"/transactions"},
-          customApiBody: {
-            table:"transactions",
-            // limit: 5
-          },
-          customCrud:["add"],
-          headers: [
-            { name: "الرقم", type: "", hidden: true },
-            { name: "المبلغ", type: "" },
-            { name: "نوع العملية", type: "tags_list",
-              values:[
-                {name:'مبيعات',value:'0',color:'#77b470'},
-                {name:'منصرفات',value:'1',color:'#e05050'},
-                {name:'وارد',value:'2',color:'#c9852c'},
-                {name:'رصيد',value:'3',color:'#0029ff'},
-                {name:'سداد دين',value:'4',color:'#e05050'},
-              ],
-              disabled: true
-            },
-            { name: "دائن / مدين", type: "icons_list",
-              values:[
-                {name:'دائن',value:'0',color:'#ff0000',icon:"arrow-up"},
-                {name:'مدين',value:'1',color:'#27a100',icon:"arrow-down"},
-              ],
-              disabled: true
-            },
-            { name: "تاريخ الانشاء", type: "", hidden: true },
-            // { name: "تاريخ التعديل", type: "", hidden: true },
-          ],
-          model:{
-            doc_id: '',
-            amount: '',
-            type: '',
-            income: '',
-            created_at: '',
-            // updated_at: '',
-          }
-        }
-    }
     ]
 }
+
+// {
+//   title: "الوارد",
+//     icon:"pie-chart",
+//   router: "/incoming",
+//   path:"incoming",
+//   component: PosComponent
+//   // tableData: {
+//   //   // modelAddType:true,
+//   //   router: { main:"/income" },
+//   //   customApiBody: {
+//   //     table:"incoming",
+//   //     foreignFields: [
+//   //       {field:"supplier_id",table:"users"},
+//   //       {field:"product_id",table:"products"},
+//   //     ],
+//   //     innerItem2: {
+//   //       conditionFiled: { pay_type: 2 },
+//   //       table:"debts",
+//   //       where: { field:"client_id", value:"supplier_id"},
+//   //       data: {
+//   //         client_id: "supplier_id",
+//   //         money_value: "total_cost"
+//   //       }
+//   //     }
+//   //   },
+//   //   headers: [
+//   //     { name: "الرقم", type: "", hidden: true },
+//   //     { name: "المورد", type: "online_list", innerTableName: "users", where: " role = 2 " },
+//   //     { name: "العنصر", type: "online_list", innerTableName: "products" },
+//   //     {
+//   //       name: "الكمية",
+//   //       type: "",
+//   //       validators: {
+//   //       error: "الكمية من 1 الى 1000",
+//   //         values: [
+//   //           Validators.required,
+//   //           Validators.min(1),
+//   //           Validators.max(1000)
+//   //         ]
+//   //       }
+//   //     },
+//   //     {
+//   //       name: "التكلفة",
+//   //       type: "",
+//   //       validators: {
+//   //         error: "التكلفة من جنيه الى مليار",
+//   //         values: [
+//   //           Validators.required,
+//   //           Validators.min(1),
+//   //           Validators.max(100000000000)
+//   //         ]
+//   //       }
+//   //     },
+//   //     { name: "الدفع", type: "tags_list",
+//   //       values:[
+//   //         { name:'كاش',  value:'0', color:'#71b649' },
+//   //         { name:'بنكك', value:'1', color:'#deae47' },
+//   //         { name:'دين',  value:'2', color:'#888888' },
+//   //       ]
+//   //     },
+//   //     { name: "الحالة", type: "tags_list",
+//   //       values: [
+//   //         { name:'لم يتم', value:'0', color:'#737373'},
+//   //         { name:'تم',     value:'1', color:'#45ce00'},
+//   //         { name:'ملغي',   value:'2', color:'#ff0000'},
+//   //       ]
+//   //     },
+//   //     { name: "تاريخ الإنشاء", type: "", disabled: true },
+//   //     { name: "تاريخ التعديل", type: "", disabled: true },
+//   //   ],
+//   //   model:{
+//   //     doc_id: '',
+//   //     supplier_id: '',
+//   //     product_id: '',
+//   //     quantity: '',
+//   //     total_cost: '',
+//   //     pay_type: '0',
+//   //     status: '1',
+//   //     created_at: Date.now(),
+//   //     updated_at: Date.now(),
+//   //   }
+//   // },
+//   // permissions:[2]
+// },
+// {
+//   title: "ادارة الوارد",
+//     router: "/incoming-management",
+//   path:"incoming-management",
+//   icon:'shopping-cart',
+//   tableData:{
+//   router: { main:"/incoming-management"},
+//   customApiBody:{
+//     table:"sales",
+//       foreignFields: [
+//       {field:"client_id",table:"users"},
+//       {field:"user_id",table:"users"}
+//     ],
+//       inner_tables:{foreignField:"sale_id",tables:["sales_items"],"get_length":true},
+//     where: " incoming = 1 "
+//   },
+//   customCrud:["return"],
+//     headers: [
+//     { name: "الرقم", type: "", hidden: true },
+//     { name: "المورد", type: "online_list" },
+//     { name: "الموظف", type: "online_list" },
+//     { name: "التكلفة", type: "" },
+//     { name: "التخفيض", type: "" },
+//     { name: "الدفع", type: "tags_list",
+//       values:[
+//         {name:'كاش',value:'0',color:'#71b649'},
+//         {name:'بنكك',value:'1',color:'#deae47'},
+//         {name:'دين',value:'2',color:'#888888'},
+//       ]
+//     },
+//     { name: "الحالة", type: "tags_list",
+//       values: [
+//         {name:'لم يتم',value:'0',color:'#737373'},
+//         {name:'تم',value:'1',color:'#45ce00'},
+//         {name:'ملغي',value:'2',color:'#ff0000'},
+//       ]
+//     },
+//     { name: "التاريخ", type: "", hidden: true },
+//     { name: "الاصناف", type: "list",
+//       innerModel: {
+//         title: "الاصناف",
+//         router: { main:"/sales_items"},
+//         customApiBody: {
+//           table:"sales_items",
+//           foreignField: {sale_id:""},
+//           foreignFields: [{field:"product_id",table:"products"}],
+//           withAdmin: true
+//         },
+//         customCrud:[],
+//         headers: [
+//           { name: "الرقم", type: "", hidden: true },
+//           { name: "اسم المنتج", type: "online_list", innerTableName: "products" },
+//           { name: "الكمية", type: "" },
+//         ],
+//         model:{
+//           doc_id: '',
+//           product_id: '',
+//           quantity: '',
+//         }
+//       }
+//     },
+//   ],
+//     model: {
+//     doc_id: '',
+//       client_id: '',
+//       user_id: '',
+//       total: '',
+//       discount: '',
+//       pay_type: '0',
+//       status: '0',
+//       created_at: '0',
+//       sales_items: undefined,
+//   }
+// }
+// },
+// {
+//   title: "الديون",
+//   router: "/debts",
+//   path:"debts",
+//   icon:'switcher',
+//   tableData: {
+//     router: { main:"/debts"},
+//     customApiBody:{
+//       table:"debts",
+//       foreignFields:[{field:"user_id",table:"users"},{field:"client_id",table:"users"}],
+//     },
+//     headers: [
+//       { name: "الرقم", type: "", hidden: true },
+//       { name: "دائن / مدين", type: "icons_list",
+//         values:[
+//           {name:'مدين',value:'0',color:'#ff0000',icon:"arrow-up"},
+//           {name:'دائن',value:'1',color:'#27a100',icon:"arrow-down"},
+//         ],
+//         disabled: true
+//       },
+//       { name: "المبلغ", type: "", completeModel: {title: "دفع الدين",placeholder:"ادخل المبلغ المدفوع", keyOfLinkedField:"payed"} },
+//       { name: "المدفوع", type: "", disabled: true},
+//       { name: "رقم العملية", type: "", disabled: true },
+//       { name: "الموظف", type: "online_list", innerTableName: "users", disabled: true },
+//       { name: "العميل / المورد", type: "online_list", innerTableName: "users" },
+//       { name: "الحالة", type: "tags_list",
+//         values:[
+//           {name:'غير مسدد',value:'0',color:'#a9a9a9'},
+//           {name:'مسدد',value:'1',color:'#27a100'},
+//           {name:'ملغي',value:'2',color:'#ff0000'}
+//         ],
+//       },
+//       { name: "الانشاء", type: "", disabled: true  },
+//       { name: "التعديل", type: "", disabled: true  },
+//     ],
+//     searchable: { keyFilter: "client_id"},
+//     model:{
+//       doc_id: '',
+//       income: '0',
+//       money_value: '',
+//       payed: '',
+//       sale_id: '',
+//       user_id: '',
+//       client_id: '',
+//       debt_status: '',
+//       created_at: Date.now(),
+//       updated_at: Date.now(),
+//     }
+//   }
+// },
+// {
+//   title: "العمليات",
+//     router: "/transactions",
+//   path:"transactions",
+//   icon:'swap',
+//   tableData: {
+//   title: "العمليات",
+//     router: { main:"/transactions"},
+//   customApiBody: {
+//     table:"transactions",
+//     // limit: 5
+//   },
+//   customCrud:["add"],
+//     headers: [
+//     { name: "الرقم", type: "", hidden: true },
+//     { name: "المبلغ", type: "" },
+//     { name: "نوع العملية", type: "tags_list",
+//       values:[
+//         {name:'مبيعات',value:'0',color:'#77b470'},
+//         {name:'منصرفات',value:'1',color:'#e05050'},
+//         {name:'وارد',value:'2',color:'#c9852c'},
+//         {name:'رصيد',value:'3',color:'#0029ff'},
+//         {name:'سداد دين',value:'4',color:'#e05050'},
+//       ],
+//       disabled: true
+//     },
+//     { name: "دائن / مدين", type: "icons_list",
+//       values:[
+//         {name:'دائن',value:'0',color:'#ff0000',icon:"arrow-up"},
+//         {name:'مدين',value:'1',color:'#27a100',icon:"arrow-down"},
+//       ],
+//       disabled: true
+//     },
+//     { name: "تاريخ الانشاء", type: "", hidden: true },
+//     // { name: "تاريخ التعديل", type: "", hidden: true },
+//   ],
+//     model:{
+//     doc_id: '',
+//       amount: '',
+//       type: '',
+//       income: '',
+//       created_at: '',
+//     // updated_at: '',
+//   }
+// }
+// }
+
 
 export default DataSources
