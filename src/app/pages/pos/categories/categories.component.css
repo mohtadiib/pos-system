@@ -65,7 +65,9 @@
   color: #d5f0ff;
   font-weight: bold;
   text-align: center;
-  font-size: 25px;
+  padding-top: 15px;
+  font-size: 15px;
+  font-family: "shamel", serif;
 }
 .more:hover{
   background-color: #347da6;

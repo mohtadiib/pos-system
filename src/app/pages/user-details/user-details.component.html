@@ -1,0 +1,23 @@
+<div class="inner-content">
+    <h1 class="fb">
+        العميل / {{name}} - {{id}}
+    </h1>
+    <div class="container">
+      <nz-tabset>
+        <nz-tab  [nzTitle]="titleTemplate3">
+          <ng-template #titleTemplate3>
+            <span nz-icon nzType="read"></span>
+            الديون
+          </ng-template>
+          <app-table-data [inputTableData]="tableData[0]" heightTable="30"/>
+        </nz-tab>
+        <nz-tab  [nzTitle]="titleTemplate4">
+            <ng-template #titleTemplate4>
+              <span nz-icon nzType="read"></span>
+              المبيعات
+            </ng-template>
+            <app-table-data [inputTableData]="tableData[1]" />
+        </nz-tab>
+      </nz-tabset>
+    </div>
+</div>

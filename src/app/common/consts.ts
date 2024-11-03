@@ -1,4 +1,5 @@
 
+// const SERVER_URL = "https://sales-system.almotamaiz.com/"
 const SERVER_URL = "http://localhost/"
 // const SERVER_URL = "http://192.168.1.34/"
 export const GlobalVariable = Object.freeze({

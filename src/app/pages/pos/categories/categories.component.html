@@ -3,7 +3,7 @@
     <ul *ngFor="let cat of categories; let i = index">
       <li (click)="select(i)" class="{{cat.select?'category category-select':'category'}}">
         <div class="imag">
-          <img class="imag-real" src="{{imagesGridService.imageUrl+cat.category_image}}" alt="mm">
+          <img class="imag-real" src="{{getImage(cat)}}" alt="mm">
         </div>
         <div class="text">
           {{cat.name}}
@@ -11,7 +11,7 @@
       </li>
     </ul>
   </div>
-<!--  <div class="more">-->
-<!--    ...-->
-<!--  </div>-->
+  <div (click)="select(0,true)" class="more">
+    الكل
+  </div>
 </div>

@@ -20,6 +20,11 @@ export class TableDataService {
     // console.log(JSON.stringify(body))
     return this.http.post<any[]>(GlobalVariable.BASE_API_URL+method,body);
   }
+
+  getDataWithGet(customPath:string): Observable<any[]> {
+    return this.http.get<any[]>(GlobalVariable.BASE_API_URL+customPath);
+  }
+
   saveData(table:any,adding:boolean,data:any,docIidSet:boolean = false){
     let method = 'update/';
     if(adding){
@@ -36,6 +41,12 @@ export class TableDataService {
       sessionId: this.authService.getToken()
     };
     console.log(JSON.stringify(body))
+    return this.http.post<any[]>(GlobalVariable.BASE_API_URL+method,body);
+  }
+
+  saveDataCustom(body:any,method:string = ""){
+    body.sessionId = this.authService.getToken()
+    // console.log(JSON.stringify(body))
     return this.http.post<any[]>(GlobalVariable.BASE_API_URL+method,body);
   }
   deleteRecord(table:string,recordId:string){

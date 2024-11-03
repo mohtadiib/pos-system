@@ -1,0 +1,46 @@
+/* .imge-profile{
+    width: 180px;
+    height: 200px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+
+table{
+    width: 80%;
+}
+
+td{
+    padding: 10px;
+}
+
+.container{
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    width: 70%;
+    height: 90%;
+}
+
+.ant-card{
+    cursor:pointer;
+    box-shadow: 0 0 20px rgba(128, 128, 128, 0.45);
+    text-align: left;
+    width: 40%;
+  }
+  .ant-card:hover{
+    box-shadow: 0 0 5px rgba(128, 128, 128, 0.45);
+  }
+  .inner-box {
+    padding: 5px 0;
+  }
+  
+  tr{
+    border-bottom: 1px rgba(128, 128, 128, 0.285) dashed;
+  }
+
+  nz-alert {
+    margin-bottom: 16px;
+  }
+  nz-alert-content {
+    color: red;
+  }
+ */

@@ -2,12 +2,12 @@
   <nz-sider *ngIf="!logged()" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
     <div class="sidebar-logo">
       <a href="https://ng.ant.design/" target="_blank">
-<!--        <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo">-->
-        <h1 *ngIf="isNotPos()">Sales System</h1>
+        <img src="./assets/img/logo.png" alt="logo">
+        <h1 *ngIf="isNotPos()">مغلق شكاك</h1>
       </a>
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline">
-      <li (click)="checkRoute()" *ngFor="let siteItem of sideBarList" nz-menu-item>
+      <li (click)="checkRoute()" *ngFor="let siteItem of authService.sideBarList" nz-menu-item>
         <span nz-icon [nzType]="siteItem.icon"></span>
         <span [className]="siteItem.title == 'POS'?'en-font':''">{{siteItem.title}}</span>
         <a [routerLink]="siteItem.router"></a>
@@ -20,20 +20,36 @@
   </nz-sider>
   <nz-layout>
     <nz-header *ngIf="isNotPos() && !logged()">
-      <div class="app-header">
-        <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
-            <span class="trigger"
-               nz-icon
-               [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
-            ></span>
-        </span>
-        <span class="header-trigger left-0">
-          <span style="font-size: 12px;font-weight: bold"
-                class="trigger user-header">
-            {{authService.department.name}} /
-            {{authService.department.user}}
+      <div class="row">
+        <div class="app-header">
+          <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+              <span class="trigger"
+                 nz-icon
+                 [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+              ></span>
           </span>
-        </span>
+          <span class="left-0 header-trigger">
+            <span style="font-size: 12px;font-weight: bold"
+                  class="trigger user-header">
+              {{authService.sessionUser.name}} /
+              {{authService.sessionUser.departmentName}}
+            </span>
+          </span>
+          </div>
+        <ul *ngIf="isStockRoute()" nz-menu nzMode="horizontal">
+          <li nz-menu-item [nzSelected]="i == 0" *ngFor="let item of authService.settingsList; let i = index" >
+            <span nz-icon nzType="{{item.icon}}"></span>
+            {{item.title}}
+            <a [routerLink]="['settings',item.router]"></a>
+          </li>
+        </ul>
+        <ul *ngIf="isOutputsRoute()" nz-menu nzMode="horizontal">
+          <li nz-menu-item [nzSelected]="i == 0" *ngFor="let item of authService.outputsList; let i = index" >
+            <span nz-icon nzType="{{item.icon}}"></span>
+            {{item.title}}
+            <a [routerLink]="['expenses',item.router]"></a>
+          </li>
+        </ul>
       </div>
     </nz-header>
     <nz-content>

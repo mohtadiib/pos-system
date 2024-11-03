@@ -1,0 +1,30 @@
+<div class="inner-content">
+    <h1 class="fb">
+        عملية بيع رقم / {{id}}
+    </h1>
+    <div class="container">
+      <nz-tabset>
+        <nz-tab  [nzTitle]="titleTemplate">
+          <ng-template #titleTemplate>
+            <span nz-icon nzType="read"></span>
+            العناصر ( المنتجات )
+          </ng-template>
+          <app-table-data [inputTableData]="tableData[0]" heightTable="30"/>
+        </nz-tab>
+        <nz-tab  [nzTitle]="titleTemplate2">
+            <ng-template #titleTemplate2>
+              <span nz-icon nzType="read"></span>
+              المستلم
+            </ng-template>
+            <app-sale-deliverd [saleId]="id"/>
+        </nz-tab>
+        <nz-tab  [nzTitle]="titleTemplate3">
+            <ng-template #titleTemplate3>
+              <span nz-icon nzType="read"></span>
+              الفاتورة
+            </ng-template>
+            <app-invoice />
+        </nz-tab>
+      </nz-tabset>
+    </div>
+</div>

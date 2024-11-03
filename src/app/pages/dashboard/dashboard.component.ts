@@ -15,21 +15,23 @@ export class DashboardComponent implements OnInit{
 
   @ViewChild(TableDataComponent) tableDataComponent: TableDataComponent | undefined
   sideBarList: any[] = new DataSources().pagesDataTable;
+  settingsList: any[] = new DataSources().settingsList;
+  outputsList: any[] = new DataSources().outputsList;
   reportObject: any = {}
   mainReports:boolean = true
-  pageTitleBackup = {report:"المبيعات",daily:"آخر خمسة عمليات"}
+  pageTitleBackup = {report:"العمليات على المحفظة",daily:"آخر خمسة عمليات على المحفظة"}
   pageTitle = this.pageTitleBackup.daily
   currentDate: Date = new Date()
   body:any = {
     dashboard:[
       {table:"sales", sumField:"total", where:" incoming = 0 ", type: "all_sales", title: "اجمالي المبيعات", icon:"file-text" },
-      // {table:"sales", sumField:"total", where:" incoming = 0 and pay_type = 2 ", type: "debts_sales", title: "مبيعات بالدين", icon:"file-done" },
+      {table:"sales", sumField:"total", where:" incoming = 0 and pay_type = 2 ", type: "debts_sales", title: "مبيعات بالدين", icon:"file-done" },
       // {table:"sales", sumField:"total", where:" incoming = 1 ", type: "all_incoming", title: "الوارد", icon:"file-done" },
-      {table:"products", type: "all_products", title: "عدد الاصناف", icon:"pic-center" },
-      // {table:"products", where: " minimum_qty > quantity", type: "products_minimum_quantity", title: "اصناف قاربت على الانتهاء", icon:"pic-center" },
-      // {table:"outputs", sumField:"moneyValue", where:" status != 2 ", type: "all_outputs", title: "المنصرفات", icon:"pic-center" },
-      // {table:"debts", sumField:"money_value", where:"", type: "all_debts", title: "الديون", icon:"pic-center" },
-      // {table:"final_money", type: "all_transactions", title: "المبلغ المتوفر", icon:"pic-center" },
+      // {table:"products", type: "all_products", title: "عدد الاصناف", icon:"pic-center" },
+      {table:"products", where: " minimum_qty > quantity", type: "products_minimum_quantity", title: "منتجات قاربت على الانتهاء", icon:"pic-center" },
+      {table:"outputs", sumField:"moneyValue", where:" status != 2 ", type: "all_outputs", title: "المنصرفات", icon:"pic-center" },
+      {table:"debts", sumField:"money_value", where:"", type: "all_debts", title: "الديون", icon:"pic-center" },
+      {table:"final_money", type: "all_transactions", title: "المبلغ المتوفر", icon:"pic-center" },
     ]
   }
   dashboardListBackup:any = this.body.dashboard
@@ -56,20 +58,27 @@ export class DashboardComponent implements OnInit{
     this.setDatesOnDashboard([this.currentDate,this.currentDate])
     this.getData()
   }
-  setReportModal(modelListFilter:string = "sales",where:any = null){
+  setReportModal(modelListFilter:string = "transactions",where:any = null){
     if (modelListFilter == "final_money"){
       modelListFilter = "transactions"
     }
-    this.reportObject = this.sideBarList.find(value => value.path == modelListFilter).tableData
+    let object = this.sideBarList.find(value => value.path == modelListFilter)
+    if(!object){
+      object = this.settingsList.find(value => value.path == modelListFilter)
+    }
+    if(!object){
+      object = this.outputsList.find(value => value.path == modelListFilter)
+    }
+    this.reportObject = object.tableData
     this.reportObject.customCrud = []
     this.reportObject.customApiBody.where = where
   }
-   setFilter(filter:string,where:any = null,index:number = 0){
+  setFilter(filter:string,where:any = null,index:number = 0){
      this.mainReports = false
      this.pageTitle = this.body.dashboard[index].title
      this.body.dashboard = this.body.dashboard.filter((value:any) => value.table == filter)
-     this.getData()
      this.setReportModal(this.body.dashboard[0].table,where)
+     this.getData()
    }
   back() {
     this.mainReports = true

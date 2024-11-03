@@ -49,4 +49,20 @@ export class DataShowTypeComponent{
       this.tableDataService.createMessage("warning","لا يمكن ادخال مبلغ اكبر من المستحق")
     }
   }
+  
+  getRoutes(){
+    let routes = []
+    if(this.header?.type == 'details'){
+      routes.push(this.header?.router[0])
+      routes.push(this.record.doc_id)
+      if(this.header.setName){
+        routes.push(this.record.name)
+      }
+      this.header?.router.filter((val:any,index:number)=> index != 0).forEach((route:any)=>{
+        routes.push(route)
+      })
+    }
+    // console.log(routes)
+   return routes
+  }
 }

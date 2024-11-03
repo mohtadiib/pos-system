@@ -1,26 +1,46 @@
-.flex{
-  display: flex;
+table{
+  width: 100%;
+  /* text-align: left; */
 }
-.w-100{
-  width: 100%
+thead,th,td{
+  border: 1px solid rgb(225, 225, 225);
 }
-.w-50{
-  width: 50%
+thead{
+  font-size: 15px;
+}
+th, td{
+  font-size: 13px;
+  text-align: right;
+  padding-right: 1rem;
+  /* padding: 5px; */
+}
+.remove-button{
+  color: red;
+  height: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  text-align: center;
+  padding: 0;
+}
+nz-select {
+  width: 200px;
+}
+input{
+  width: 100%;
+  text-align: left;
+  padding-left: 1rem;
+}
+textarea:focus, input:focus{
+  outline: 1px rgb(0, 26, 255) solid;
+  background-color: cornsilk;
+}
+input:hover{
+  background-color: cornsilk;
 }
 
-nz-divider{
-  margin: 11px 0
+.table-h{
+  min-height: 400px;
 }
-
-.mt-5{
-  margin-top: 5%;
-}
-.mt-10{
-  margin-top: 10%;
-}
-.mb-5{
-  margin-bottom: 5%;
-}
-.mb-10{
-  margin-bottom: 10%;
+.none-border{
+  border: none;
 }

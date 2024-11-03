@@ -28,7 +28,7 @@
 }
 .login .logo img{
   width: 10rem;
-  height: 10rem;
+  height: 12rem;
 }
 .login-container{
   width: 100%;
@@ -36,4 +36,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.footer{
+  position: absolute;
+  bottom: 20px;
+  color: grey;
 }

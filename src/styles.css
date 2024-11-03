@@ -1,4 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+h1{
+  font-size: 20px;
+}
 .center{
   text-align: center;
 }
@@ -62,4 +65,10 @@
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: lightgrey;
+}
+
+@media print{
+  .ant-layout-sider{
+    display: none;
+  }
 }

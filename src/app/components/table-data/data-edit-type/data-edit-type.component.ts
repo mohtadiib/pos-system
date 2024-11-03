@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import {TableDataService} from "../table-data.service";
 import {ImagesGridService} from "../images-grid/images-grid.service";
+import { GlobalVariable } from 'src/app/common/consts';
 
 @Component({
   selector: 'app-data-edit-type',
@@ -28,12 +29,12 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
   @Input() header!: any;
   @Input() selectedListItem!: any;
   @Output() setSizeField = new EventEmitter<any>()
+  imageUrl: string = GlobalVariable.BASE_API_URL_IMAGES
   form!: FormGroup;
   choicesList: any[] = []
   constructor(
     private parent: FormGroupDirective,
     public tableDataService:TableDataService,
-    public imagesGridService: ImagesGridService
   ) {}
   ngOnInit() {
     this.setFormControllers()
@@ -43,7 +44,9 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
     if (this.form.get(this.keyItem)){
       if (this.header?.type == 'online_list') {
         this.form.controls[this.keyItem].setValue(`${this.value.doc_id}`);
-      }else{
+      }else if (this.header?.type == 'image_view') {
+        this.tableDataService.selectedImage.image = this.value
+      }else {
         this.form.controls[this.keyItem].setValue(this.value);
       }
     }else {

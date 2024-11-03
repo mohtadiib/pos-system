@@ -1,110 +1,100 @@
-<br />
-<div class="font-bold">{{pageTitle}}</div>
-<div class="row">
+<h1 class="font-bold">{{pageTitle}}</h1>
+<div class="mb-2 row">
+  <!-- list length: {{this.listOfData?.length}} -->
   <div *ngIf="showAddButton()">
     <button nz-button (click)="checkEditing()?submitForm():
     tableData.customAddButton?routeTo(tableData.customAddButton.routTo):
     tableData.modelAddType?
-    showModal():addRow()"
-            nzType="primary">
+    showModal():addRow()" nzType="primary">
       {{checkEditing()?"تحديث":"اضافة جديد"}}
       <span nz-icon nzType="{{checkEditing()?'edit':'plus'}}" nzTheme="outline"
-            style="font-size: 16px;color: #ffffff;"></span>
+        style="font-size: 16px;color: #ffffff;"></span>
     </button>
-    <br />
+    <!-- <br/> -->
   </div>
-  <div *ngIf="tableData?.searchable" class="mr-20">
+  <div *ngIf="tableData.searchable" class="mr-20">
     <nz-input-group [nzSuffix]="suffixIconSearch">
-      <input (keyup)="inputSearchChange()" [(ngModel)]="searchValue" type="text" nz-input placeholder="ابحث عن مورد / عميل" />
+      <input (keyup)="searchItem()" [(ngModel)]="searchValue" type="text" nz-input
+        placeholder={{tableData.searchable?.placeholder}} />
     </nz-input-group>
     <ng-template #suffixIconSearch>
       <span nz-icon nzType="search"></span>
     </ng-template>
   </div>
+  <app-pdf-reports [listOfKeys]="tableData.headers!" [listOfData]="listOfData" [keysEditModel]="keysEditModel" [title]="tableData.title!"/>
 </div>
-<br />
-<nz-table nzLoading="{{tableLoading}}" #editRowTable nzBordered
-          [nzData]="filteredListOfData()" [nzShowPagination]="pagination" [nzPageSize]="10" [nzScroll]="{ y: '55vh' }">
+<nz-table nzLoading="{{tableLoading}}" #editRowTable nzBordered [nzData]="listOfData" [nzShowPagination]="false"
+  [nzPageSize]="10" [nzScroll]="{ y: '55vh' }">
   <thead>
-  <tr>
-    <th *ngFor="let item of tableData.headers">
-      {{item.name}}
-    </th>
-    <th *ngIf="checkIfAddButton()">اجراء</th>
-  </tr>
+    <tr>
+      <th [nzWidth]="item?.width?item?.width:''" *ngFor="let item of tableData.headers">
+        {{item.name}}
+      </th>
+      <th *ngIf="checkIfAddButton()">اجراء</th>
+    </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let data of filteredListOfData()">
-    <ng-container *ngIf="!editCache[data.doc_id!].edit; else editTemplate">
-      <td (dblclick)="checkActionButtons(data)?startEdit(data.doc_id):null" *ngFor="let keyItem of keysEditModel; let i = index">
-        <app-data-show-type
-          [header]="tableData.headers![i]"
-          [value]="data[keyItem]"
-          [record]="data"
-          (messageEvent)="receiveMessage($event)"
-        />
-      </td>
-      <td *ngIf="checkIfAddButton()">
-        <a *ngIf="checkActionButtons('edit')" (click)="startEdit(data.doc_id!)">
-          <span nz-icon nzType="edit" nzTheme="fill" style="font-size: 18px;"></span>
-        </a>
-        <nz-divider *ngIf="checkActionButtons('delete')" nzType="vertical"></nz-divider>
-        <a *ngIf="checkActionButtons('delete')"
-           nz-popconfirm="m" nzPopconfirmTitle="حذف السجل؟"
-           (nzOnConfirm)="deleteRow(data.doc_id!)">
-          <span nz-icon nzType="delete" nzTheme="fill" style="font-size: 18px; color: #ff0000;"></span>
-        </a>
-        <nz-divider *ngIf="checkActionButtons('return',!tableData.customCrud?.includes('return'))" nzType="vertical"></nz-divider>
-        <a *ngIf="checkActionButtons('return',!tableData.customCrud?.includes('return')) && +data.status < 2"
-           nz-popconfirm="m" nzPopconfirmTitle="الغاء العملية؟"
-           (nzOnConfirm)="cancelRow(data)">
-          <span nz-icon nzType="delete" nzTheme="fill" style="font-size: 18px; color: #656565;"></span>
-        </a>
-        <a disabled *ngIf="checkActionButtons('return',!tableData.customCrud?.includes('return')) && +data.status == 2">
-          <span nz-icon nzType="delete" nzTheme="fill" style="font-size: 18px; color: #d3d3d3;"></span>
-        </a>
-      </td>
-    </ng-container>
-    <ng-template #editTemplate>
-      <td class="p-all-0" *ngFor="let keyItem of keysEditModel; let i = index">
-        <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
-          <app-data-edit-type
-            [header]="tableData.headers![i]"
-            [value]="editCache[data.doc_id!].data[keyItem]"
-            [keyItem]="keyItem"
-            (setSizeField)="receiveSize($event)"
-            [selectedListItem]="itemFromEditComponent"
-          ></app-data-edit-type>
-        </form>
-      </td>
-      <td>
-        <a nz-popconfirm="m" nzPopconfirmTitle="الغاء التعديل؟" (nzOnConfirm)="cancelEdit(data.doc_id!)">
-          <span nz-icon nzType="close" nzTheme="outline"></span>
-        </a>
-      </td>
-    </ng-template>
-  </tr>
+    <tr *ngFor="let data of listOfData">
+      <ng-container *ngIf="!editCache[data.doc_id!].edit; else editTemplate">
+        <td (dblclick)="checkActionButtons(data)?startEdit(data.doc_id):null"
+          *ngFor="let keyItem of keysEditModel; let i = index">
+          <app-data-show-type [header]="tableData.headers![i]" [value]="data[keyItem]" [record]="data"
+            (messageEvent)="receiveMessage($event)" />
+        </td>
+        <td *ngIf="checkIfAddButton()">
+          <a *ngIf="checkActionButtons('edit')" (click)="startEdit(data.doc_id!)">
+            <span nz-icon nzType="edit" nzTheme="fill" style="font-size: 18px;"></span>
+          </a>
+          <nz-divider *ngIf="checkActionButtons('delete')" nzType="vertical"></nz-divider>
+          <a *ngIf="checkActionButtons('delete')" nz-popconfirm="m" nzPopconfirmTitle="حذف السجل؟"
+            (nzOnConfirm)="deleteRow(data.doc_id!)">
+            <span nz-icon nzType="delete" nzTheme="fill" style="font-size: 18px; color: #ff0000;"></span>
+          </a>
+          <nz-divider *ngIf="checkActionButtons('return',!tableData.customCrud?.includes('return'))"
+            nzType="vertical"></nz-divider>
+          <a *ngIf="checkActionButtons('return',!tableData.customCrud?.includes('return')) && +data.status < 2"
+            nz-popconfirm="m" nzPopconfirmTitle="الغاء العملية؟" (nzOnConfirm)="cancelRow(data)">
+            <span nz-icon nzType="delete" nzTheme="fill" style="font-size: 18px; color: #656565;"></span>
+          </a>
+          <a disabled
+            *ngIf="checkActionButtons('return',!tableData.customCrud?.includes('return')) && +data.status == 2">
+            <span nz-icon nzType="delete" nzTheme="fill" style="font-size: 18px; color: #d3d3d3;"></span>
+          </a>
+        </td>
+      </ng-container>
+      <ng-template #editTemplate>
+        <td class="p-all-0" *ngFor="let keyItem of keysEditModel; let i = index">
+          <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
+            <app-data-edit-type [header]="tableData.headers![i]" [value]="editCache[data.doc_id!].data[keyItem]"
+              [keyItem]="keyItem" (setSizeField)="receiveSize($event)"
+              [selectedListItem]="itemFromEditComponent"></app-data-edit-type>
+          </form>
+        </td>
+        <td>
+          <a nz-popconfirm="m" nzPopconfirmTitle="الغاء التعديل؟" (nzOnConfirm)="cancelEdit(data.doc_id!)">
+            <span nz-icon nzType="close" nzTheme="outline"></span>
+          </a>
+        </td>
+      </ng-template>
+    </tr>
   </tbody>
 </nz-table>
 <br />
+<!-- Pagination -->
+<nz-pagination (nzPageIndexChange)="changePaginationIndex($event)" [nzPageSize]="pagination.perPage"
+  [nzPageIndex]="pagination.paginationIndex" [nzTotal]="pagination.rowsCount"></nz-pagination>
 
-<nz-modal
-  [nzStyle]="{ top: '20px' }"
-  [(nzVisible)]="isVisible" nzTitle="سجل جديد" (nzOnCancel)="handleCancel()"
-          (nzOnOk)="handleOk()">
+<nz-modal [nzStyle]="{ top: '20px' }" [(nzVisible)]="isVisible" nzTitle="سجل جديد" (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()">
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
       <nz-form-item *ngFor="let keyItem of keysEditModel; let i = index">
-        <nz-form-label *ngIf="!tableData.headers![i].disabled" [nzSpan]="5"
-                       nzRequired nzFor="{{keyItem}}">{{tableData.headers![i].name}}</nz-form-label>
+        <nz-form-label *ngIf="!tableData.headers![i].disabled" [nzSpan]="5" nzRequired
+          nzFor="{{keyItem}}">{{tableData.headers![i].name}}</nz-form-label>
         <nz-form-control *ngIf="!tableData.headers![i].disabled" [nzSpan]="12" nzErrorTip="الحقل مهم!">
-          <app-data-edit-type
-            [header]="tableData.headers![i]"
-            [value]="editingObject.recordId?
-            editCache[editingObject.recordId].data[keyItem]:''"
-            [keyItem]="keyItem"
-            (setSizeField)="receiveSize($event)"
-          ></app-data-edit-type>
+          <app-data-edit-type [header]="tableData.headers![i]" [value]="editingObject.recordId?
+            editCache[editingObject.recordId].data[keyItem]:''" [keyItem]="keyItem"
+            (setSizeField)="receiveSize($event)"></app-data-edit-type>
         </nz-form-control>
       </nz-form-item>
     </form>

@@ -25,7 +25,20 @@ import {RouterLink} from "@angular/router";
 import {NzFormModule} from "ng-zorro-antd/form";
 import {ImagesGridComponent} from "./images-grid/images-grid.component";
 import {UploadComponent} from "./images-grid/upload/upload.component";
-
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+import { UserDetailsComponent } from 'src/app/pages/user-details/user-details.component';
+import { SaleDetailsComponent } from 'src/app/pages/sale-details/sale-details.component';
+import { InvoiceComponent } from '../invoice/invoice.component';
+import { SaleDeliverdComponent } from 'src/app/pages/sale-details/sale-deliverd/sale-deliverd.component';
+import { ProductsComponent } from 'src/app/pages/products/products.component';
+import {NzInputNumberModule} from "ng-zorro-antd/input-number";
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { HeaderComponent } from '../invoice/header/header.component';
+import { InfoComponent } from '../invoice/info/info.component';
+import { ItemsTableComponent } from '../invoice/items-table/items-table.component';
+import { DownloadBtnComponent } from '../invoice/download-btn/download-btn.component';
+import { PdfReportsComponent } from './pdf-reports/pdf-reports.component';
+import { BackBtnComponent } from '../back-btn/back-btn.component';
 
 @NgModule({
     imports: [
@@ -47,6 +60,9 @@ import {UploadComponent} from "./images-grid/upload/upload.component";
         NzAvatarModule,
         RouterLink,
         NzFormModule,
+        NzPaginationModule,
+        NzInputNumberModule,
+        NzSwitchModule
     ],
   declarations: [
     TableDataComponent,
@@ -57,7 +73,18 @@ import {UploadComponent} from "./images-grid/upload/upload.component";
     // ProfileComponent,
     PagesComponent,
     ImagesGridComponent,
-    UploadComponent
+    UploadComponent,
+    UserDetailsComponent,
+    SaleDetailsComponent,
+    InvoiceComponent,
+    SaleDeliverdComponent,
+    ProductsComponent,
+    HeaderComponent,
+    InfoComponent,
+    ItemsTableComponent,
+    DownloadBtnComponent,
+    PdfReportsComponent,
+    BackBtnComponent
   ],
   exports: [
     TableDataComponent,

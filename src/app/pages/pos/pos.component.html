@@ -1,34 +1,34 @@
 <div class="bg-blue-gray-50">
   <!-- noprint-area -->
-  <div class="hide-print flex flex-row h-screen antialiased text-blue-gray-800">
+  <div class="flex flex-row h-screen antialiased hide-print text-blue-gray-800">
     <!-- left sidebar -->
 <!--   <app-pos-side />-->
     <!-- page content -->
-    <div class="flex-grow flex">
+    <div class="flex flex-grow">
       <!-- store menu -->
-      <div class="flex flex-col bg-blue-gray-50 h-full w-full py-4">
-        <div class="flex px-2 flex-row relative">
-          <div class="absolute left-5 top-3 px-2 py-2 rounded-full bg-cyan-500 text-white">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="flex flex-col w-full h-full py-4 bg-blue-gray-50">
+        <div class="relative flex flex-row px-2">
+          <div class="absolute px-2 py-2 text-white rounded-full left-5 top-3 bg-cyan-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
           <input
             type="text"
-            class="pr-5 bg-white rounded-3xl text-lg full w-full h-16 py-4 pl-16 transition-shadow focus:shadow-2xl focus:outline-none"
+            class="w-full h-16 py-4 pl-16 pr-5 text-lg transition-shadow bg-white rounded-3xl full focus:shadow-2xl focus:outline-none"
             placeholder="ابحث عن صنف .."
             [(ngModel)]="keyword"
           />
         </div>
         <app-categories (messageEvent)="receiveMessage($event)"/>
-        <div class="h-full overflow-hidden mt-4">
-          <div class="h-full overflow-y-auto px-2">
+        <div class="h-full mt-4 overflow-hidden">
+          <div class="h-full px-2 overflow-y-auto">
             <div
-              class="select-none bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25"
+              class="flex flex-wrap content-center justify-center h-full opacity-25 select-none bg-blue-gray-100 rounded-3xl"
               *ngIf="filteredProducts().length === 0"
             >
               <div class="w-full text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-24 h-24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
                 </svg>
                 <p class="text-xl">
@@ -39,11 +39,11 @@
               </div>
             </div>
             <div
-              class="select-none bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25"
+              class="flex flex-wrap content-center justify-center h-full opacity-25 select-none bg-blue-gray-100 rounded-3xl"
               *ngIf="filteredProducts().length === 0 && keyword.length > 0"
             >
               <div class="w-full text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-24 h-24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <p class="text-xl">
@@ -57,17 +57,17 @@
               <div *ngFor="let product of filteredProducts()">
                 <div
                   role="button"
-                  class="select-none cursor-pointer transition-shadow overflow-hidden rounded-2xl bg-white hover:shadow-lg"
-                  title="{{product.name}}"
+                  class="overflow-hidden transition-shadow bg-white cursor-pointer select-none rounded-2xl hover:shadow-lg"
+                  title="{{product?.product}}"
                   (click)="addToCart(product)"
                 >
-                  <img class="img-item" src="{{imagesGridService.imageUrl+product.product_image}}" alt="{{product.name}}">
-<!--                  <p class="center" [textContent]="product.size+' متر '"></p>-->
-                  <div class="flex pb-3 px-3 text-sm mt-1">
-                    <p class="flex-grow truncate mr-1" [textContent]="getProductName(product)"></p>
-                    <p class="nowrap font-semibold" [textContent]="priceFormat(product[getPriceKeyItem()])"></p>
+                  <img class="img-item" src="{{getProductImage(product)}}" alt="{{product?.product}}">
+                  <p class="flex-grow mr-1 text-center truncate" [textContent]="getProductName(product)"></p>
+                  <p class="font-semibold text-center nowrap" [textContent]="priceFormat(product[getPriceKeyItem()])"></p>
+                  <div class="flex px-3 pb-3 mt-1 text-sm">
+                    <p class="flex-grow mr-1 truncate" [textContent]="'متوفر: '+getQuantity(product)"></p>
+                    <p class="flex-grow truncate" [textContent]="product?.unit"></p>
                   </div>
-<!--                  {{product.quantity}}-->
                 </div>
               </div>
             </div>
@@ -77,13 +77,13 @@
       <!-- end of store menu -->
 
       <!-- right sidebar -->
-      <div class="w-5/12 flex flex-col bg-blue-gray-50 h-full pr-4 pl-2 py-4">
-        <div class="border-right rounded-3xl flex flex-col h-full">
+      <div class="flex flex-col w-5/12 h-full py-4 pl-2 pr-4 bg-blue-gray-50">
+        <div class="flex flex-col h-full border-right rounded-3xl">
           <div
-            class="flex font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
+            class="flex px-3 py-2 font-semibold rounded-lg text-blue-gray-700"
           >
-            <div class="text-blue-gray-200 pt-1">{{isIncoming()?'المورد':'العميل'}}</div>
-            <div class="mr-52 w-full">
+            <div class="pt-1 text-blue-gray-200">{{isIncoming()?'المورد':'العميل'}}</div>
+            <div class="w-full mr-52">
               <nz-select
                 (nzOpenChange)="supplierSelect($event)"
                 [(ngModel)]="saleArgs.clientId"
@@ -97,8 +97,8 @@
             </div>
           </div>
           <!-- empty cart -->
-          <div *ngIf="cart.length === 0" class="flex-1 w-full p-4 opacity-25 select-none flex flex-col flex-wrap content-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div *ngIf="cart.length === 0" class="flex flex-col flex-wrap content-center justify-center flex-1 w-full p-4 opacity-25 select-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
             <p>
@@ -107,19 +107,19 @@
           </div>
 
           <!-- cart items -->
-          <div *ngIf="cart.length > 0" class="flex-1 flex flex-col overflow-auto">
-            <div class="h-16 text-center flex justify-center">
-              <div class="pr-8 text-lg py-4 relative">
+          <div *ngIf="cart.length > 0" class="flex flex-col flex-1 overflow-auto">
+            <div class="flex justify-center h-16 text-center">
+              <div class="relative py-4 pr-8 text-lg">
                 <!-- cart icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <div *ngIf="getItemsCount() > 0" class="text-center absolute bg-cyan-500 text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -left-2 top-3" [innerText]="getItemsCount()"></div>
+                <div *ngIf="getItemsCount() > 0" class="absolute w-5 h-5 p-0 text-xs leading-5 text-center text-white rounded-full bg-cyan-500 -left-2 top-3" [innerText]="getItemsCount()"></div>
               </div>
-              <div class="flex-grow px-8 text-left text-lg py-4 relative">
+              <div class="relative flex-grow px-8 py-4 text-lg text-left">
                 <!-- trash button -->
                 <button (click)="clear()" class="text-blue-gray-300 hover:text-pink-500 focus:outline-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
@@ -128,22 +128,22 @@
 
             <div class="flex-1 w-full px-4 overflow-auto">
               <div *ngFor="let item of cart">
-                <div class="select-none mb-3 bottom-border rounded-lg w-full text-blue-gray-700 py-2 px-2 flex justify-center">
-                  <img src="{{imagesGridService.imageUrl+item.image}}" alt="" class="rounded-lg h-10 w-10 bg-white shadow ml-2">
+                <div class="flex justify-center w-full px-2 py-2 mb-3 rounded-lg select-none bottom-border text-blue-gray-700">
+                  <img src="{{imageUrl+item.image}}" alt="" class="w-10 h-10 ml-2 bg-white rounded-lg shadow">
                   <div class="flex-grow">
                     <h5 class="text-sm" >{{item.name}}</h5>
-                    <p class="text-xs block" >{{priceFormat(item[getPriceKeyItem()])}}</p>
+                    <p class="block text-xs" >{{priceFormat(item[getPriceKeyItem()])}}</p>
                   </div>
                   <div class="py-1">
-                    <div class="w-40 grid grid-cols-3 gap-2 ml-2">
-                      <button (click)="addQty(item, -1)" class="rounded-lg text-center py-1 text-white bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="grid w-40 grid-cols-3 gap-2 ml-2">
+                      <button (click)="addQty(item, -1)" class="py-1 text-center text-white rounded-lg bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-3 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
                         </svg>
                       </button>
-                      <input (keyup)="quantityChange(item,$event)" value="{{item.qty}}" type="text" class="bg-white rounded-lg text-center shadow focus:outline-none focus:shadow-lg text-sm">
-                      <button (click)="addQty(item, 1)" class="rounded-lg text-center py-1 text-white bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <input (keyup)="quantityChange(item,$event)" value="{{item.qty}}" type="text" class="text-sm text-center bg-white rounded-lg shadow focus:outline-none focus:shadow-lg">
+                      <button (click)="addQty(item, 1)" class="py-1 text-center text-white rounded-lg bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-3 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
                       </button>
@@ -156,30 +156,30 @@
           <!-- end of cart items -->
 
           <!-- payment info -->
-          <div class="select-none h-auto w-full text-center pt-3 pb-4 px-4">
+          <div class="w-full h-auto px-4 pt-3 pb-4 text-center select-none">
             <div
-              class="flex font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
+              class="flex px-3 py-2 font-semibold rounded-lg text-blue-gray-700"
             >
               <div class="text-blue-gray-200">الاجمالي</div>
               <div
-                class="text-left flex-grow text-blue-gray-700">
+                class="flex-grow text-left text-blue-gray-700">
                 {{priceFormat(getTotalPrice())}}
               </div>
             </div>
             <div
-              class="flex font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
+              class="flex px-3 py-2 font-semibold rounded-lg text-blue-gray-700"
             >
               <div class="text-blue-gray-200">خصم</div>
-              <div class="text-left mr-52 flex text-blue-gray-700">
-                <input [(ngModel)]="discount" (change)="updateDiscount()" type="number" class="w-28 bg-white border-2 rounded-lg focus:bg-white focus:shadow-lg px-2 focus:outline-none">
-                <div class="mr-2 mt-2 font-light text-blue-gray-200">جنيه</div>
+              <div class="flex text-left mr-52 text-blue-gray-700">
+                <input [(ngModel)]="discount" (change)="updateDiscount()" type="number" class="px-2 bg-white border-2 rounded-lg w-28 focus:bg-white focus:shadow-lg focus:outline-none">
+                <div class="mt-2 mr-2 font-light text-blue-gray-200">جنيه</div>
               </div>
             </div>
             <div
-              class="flex font-semibold text-blue-gray-700 rounded-lg py-2 px-3"
+              class="flex px-3 py-2 font-semibold rounded-lg text-blue-gray-700"
             >
               <div class="text-blue-gray-200">الدفع</div>
-              <div class="mr-52 w-full">
+              <div class="w-full mr-52">
                 <nz-select
                   [(ngModel)]="saleArgs.paymentType"
                 >
@@ -197,11 +197,11 @@
               </div>
             </div>
             <div
-              class="flex font-semibold bg-cyan-50 text-blue-gray-700 rounded-lg py-2 px-3"
+              class="flex px-3 py-2 font-semibold rounded-lg bg-cyan-50 text-blue-gray-700"
             >
               <div class="text-cyan-200">المدفوع</div>
               <div
-                class="text-left flex-grow text-cyan-600"
+                class="flex-grow text-left text-cyan-600"
                 [innerText]="getTotal()">
               </div>
             </div>
@@ -221,11 +221,11 @@
     <!-- modal receipt -->
     <div
       *ngIf="isShowModalReceipt"
-      class="fixed w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center p-24"
+      class="fixed top-0 left-0 z-10 flex flex-wrap content-center justify-center w-full h-screen p-24"
     >
       <div
         *ngIf="isShowModalReceipt"
-        class="fixed glass w-full h-screen left-0 top-0 z-0" (click)="closeModalReceipt()"
+        class="fixed top-0 left-0 z-0 w-full h-screen glass" (click)="closeModalReceipt()"
       ></div>
       <!--    x-transition:enter="transition ease-out duration-100"-->
       <!--    x-transition:enter-start="opacity-0"-->
@@ -236,7 +236,7 @@
 
       <div
         *ngIf="isShowModalReceipt"
-        class="w-96 rounded-3xl bg-white shadow-xl overflow-hidden z-10"
+        class="z-10 overflow-hidden bg-white shadow-xl w-96 rounded-3xl"
       >
         <!--      x-transition:enter="transition ease-out duration-100"-->
         <!--      x-transition:enter-start="opacity-0 transform scale-90"-->
@@ -245,13 +245,13 @@
         <!--      x-transition:leave-start="opacity-100 transform scale-100"-->
         <!--      x-transition:leave-end="opacity-0 transform scale-90"-->
 
-        <div id="receipt-content" class="text-right w-full text-sm p-6 overflow-auto">
+        <div id="receipt-content" class="w-full p-6 overflow-auto text-sm text-right">
           <div class="text-center">
-            <img src="assets/img/receipt-logo.png" alt="Tailwind POS" class="mb-3 w-8 h-8 inline-block">
-            <h2 class="text-xl font-semibold">POS SYSTEM</h2>
+            <img src="assets/img/logo.png" alt="Tailwind POS" class="inline-block w-8 h-8 mb-3">
+            <h2 class="text-xl font-semibold">مغلق شكاك</h2>
           </div>
           <div class="flex mt-4 text-xs">
-            <div class="flex-grow">No: <span [textContent]="receiptNo"></span></div>
+            <div class="flex-grow">رقم العملية: <span [textContent]="receiptNo"></span></div>
             <div [textContent]="receiptDate"></div>
           </div>
           <hr class="my-2">
@@ -259,10 +259,10 @@
             <table class="w-full text-xs">
               <thead>
               <tr>
-                <th class="py-1 w-1/12 text-center">#</th>
+                <th class="w-1/12 py-1 text-center">#</th>
                 <th class="py-1 text-right">العنصر</th>
-                <th class="py-1 w-2/12 text-center">الكمية</th>
-                <th class="py-1 w-3/12 text-left">المجموع</th>
+                <th class="w-2/12 py-1 text-center">الكمية</th>
+                <th class="w-3/12 py-1 text-left">المجموع</th>
               </tr>
               </thead>
               <tbody>
@@ -296,8 +296,9 @@
             </div>
           </div>
         </div>
-        <div class="p-4 w-full">
-          <button class="bg-cyan-500 text-white text-lg px-4 py-3 rounded-2xl w-full focus:outline-none" (click)="printAndProceed()">طباعة</button>
+        <div class="w-full p-4">
+          <button class="w-full px-4 py-3 text-lg text-white bg-cyan-500 rounded-2xl focus:outline-none" (click)="printAndProceed()">الفاتورة</button>
+          <button class="w-full py-3 mt-5 text-lg text-white px-5-4 bg-cyan-800 rounded-2xl focus:outline-none" (click)="closeReciept()">اغلاق</button>
         </div>
       </div>
     </div>

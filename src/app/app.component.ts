@@ -9,14 +9,15 @@ import {AuthService} from "./services/auth.service";
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  constructor(private router: Router,public authService:AuthService) {
+  constructor(private router: Router,public authService:AuthService,private activatedRoute:ActivatedRoute) {
     console.log(this.router.url)
   }
   isCollapsed = false;
   title!: "Sales System";
-  sideBarList: any[] = new DataSources().pagesDataTable;
+  // sideBarList: any[] = new DataSources().pagesDataTable;
   getRoute = () => this.router.url
   logged = () => this.router.url == '/login'
+  isSetting = () => this.getRoute() == '/settings'
   isNotPos = () => this.getRoute() != '/pos' && this.getRoute() != '/incoming'
   checkRoute(){
     console.log(this.router.url)
@@ -32,4 +33,9 @@ export class AppComponent {
         break;
     }
   }
+      // @ts-ignore
+  public isStockRoute = () =>  this.activatedRoute.snapshot.firstChild?.url == "settings"
+        // @ts-ignore
+  public isOutputsRoute = () =>  this.activatedRoute.snapshot.firstChild?.url == "expenses"
+
 }

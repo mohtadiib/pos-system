@@ -1,0 +1,75 @@
+.table-h{
+    height: 50vh;
+    /* overflow: auto; */
+  }
+  
+  table{
+      width: 100%;
+      /* text-align: left; */
+    }
+    thead,th,td{
+      border: 1px solid rgb(225, 225, 225);
+    }
+    
+    th, td{
+      font-size: 13px;
+      text-align: center;
+      padding-right: 1rem;
+      /* padding: 5px; */
+    }
+    th, td{
+      font-size: 13px;
+      text-align: center;
+      padding-right: 1rem;
+      /* padding: 5px; */
+    }
+    .remove-button{
+      color: red;
+      height: 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      text-align: center;
+      padding: 0;
+    }
+    nz-select {
+      width: 200px;
+    }
+    input{
+      width: 100%;
+      text-align: center;
+      padding-left: 1rem;
+    }
+    textarea:focus, input:focus{
+      outline: 1px rgb(0, 26, 255) solid;
+      background-color: cornsilk;
+    }
+    input:hover{
+      background-color: cornsilk;
+    }
+    .logo{
+      width: 5rem;
+      /* height: 60px; */
+      margin-right: 15%;
+      margin-left: 10%;
+    }
+    .none-border{
+      border: none;
+    }
+    
+    .footer-paper{
+      position: absolute;
+      bottom: 10px;
+      width: 95%;
+      text-align: center;
+      color: grey;
+    }
+    .footer-logo{
+      width: 30px;
+    }
+  
+    @media print {
+      .table-h{
+        height: 100%;
+        overflow: hidden;
+      }
+    }

@@ -28,6 +28,8 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzSelectModule} from "ng-zorro-antd/select";
 import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
+import { SettingsComponent } from './pages/settings/settings.component';
+import { OutputsComponent } from './pages/outputs/outputs.component';
 
 registerLocaleData(ar);
 
@@ -38,7 +40,9 @@ registerLocaleData(ar);
         CategoriesComponent,
         PosSideComponent,
         AuthComponent,
-        DashboardComponent
+        DashboardComponent,
+        SettingsComponent,
+        OutputsComponent,
     ],
     imports: [
         TableDataModule,

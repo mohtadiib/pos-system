@@ -1,6 +1,8 @@
-<button *ngIf="header?.type == 'list'" (click)="showModal()" nz-button nzType="default">
+<button [routerLink]="getRoutes()" 
+*ngIf="header?.type == 'list' || header?.type == 'details' || header?.type == 'tags_list_choices' && value=='1'" 
+ (click)="showModal()" nz-button nzType="default">
+  {{header?.type == 'details'?'المزيد':value}}
   <span nz-icon nzType="eye"></span>
-  {{value}}
 </button>
 <!--Normal View-->
 <div (click)="showModalCompleteModal()" *ngIf="header?.type == ''" [style]="{color: value?'':'darkgrey',cursor: header?.completeModel?'pointer':''}" >
@@ -31,7 +33,7 @@
   <div [style]="'margin-right:5px;'">{{header!.values[+value]?.name}}</div>
 </div>
 
-<img  *ngIf="header?.type == 'image_view'" src="{{imagesGridService.imageUrl+value}}" alt="{{value}}" width="50" height="50">
+<img  *ngIf="header?.type == 'image_view'" src="{{imagesGridService.imageUrl+value}}" alt="{{value}}" width="30">
 <div *ngIf="header?.type == 'list'" >
   <nz-modal
     [nzStyle]="{width: '80%'}"

@@ -29,5 +29,6 @@ export interface TableData {
   customAddButton?:any
   actionButtons?:any
   searchable?:any
+  hideWhenLength?:number
 }
 

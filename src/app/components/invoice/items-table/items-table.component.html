@@ -1,0 +1,31 @@
+<div class="mt-1 table-h">
+    <h3>المنتجات</h3>
+    <table class="w-full fs-12">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>المبلغ</th>
+          <th>العدد</th>
+          <th class="w-40">البيان</th>
+          <th>السعر</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let product of saleItems; let i = index">
+          <td class="w-10">{{i+1}}</td>
+          <td class="w-20 p-0">
+          {{+product.price*+product.quantity}}
+          </td>
+          <td class="w-20 p-0">
+            {{product.quantity}}
+          </td>
+          <td class="w-40">
+            {{product.unit+' '+product.product}}
+          </td>
+          <td class="w-20">
+            {{product.price}}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+</div>

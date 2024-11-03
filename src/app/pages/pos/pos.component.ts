@@ -4,6 +4,7 @@ import {AuthService} from "../../services/auth.service";
 import {ImagesGridService} from "../../components/table-data/images-grid/images-grid.service";
 import {Router} from "@angular/router";
 import {priceFormat} from "../../common/math";
+import { GlobalVariable } from 'src/app/common/consts';
 
 @Component({
   selector: 'app-pos',
@@ -13,13 +14,22 @@ import {priceFormat} from "../../common/math";
 export class PosComponent implements OnInit{
   categoryId:string = '';
   nzSelectStatusError = false
-  linkWithStock: boolean = false
-  constructor(private router: Router,public dataService:TableDataService, public authService:AuthService, public imagesGridService:ImagesGridService) {
+  linkWithStock: boolean = true
+  imageUrl: string = GlobalVariable.BASE_API_URL_IMAGES
+  constructor(
+    private router: Router,
+    public dataService:TableDataService,
+    public authService:AuthService
+    ) {
     this.time = null as any
   }
   isIncoming = () => this.router.url == "/incoming"
   getPriceKeyItem = () => this.isIncoming()? "cost":"price"
-  getProductName = (product:any) => product.category_id.name
+  getProductName = (product:any) => product.product
+
+  getQuantity = (product: any) => this.isIncoming()? product.quantity_per_unit:product.quantity
+  
+  getProductImage = (product:any) => product.product_image?this.imageUrl+product.product_image:"./assets/img/logo_grey.png"
   receiveMessage($event:any) {
     this.categoryId = $event
   }
@@ -38,29 +48,20 @@ export class PosComponent implements OnInit{
   isShowModalReceipt: boolean = false
   receiptNo: string = ""
   receiptDate: string = ""
+  
   async loadProducts() {
-    let where = ""
-    if (!this.isIncoming()){
-      // where = "quantity > 0"
-    }
-    let body = {
-      table: 'products',
-      where: where,
-      foreignFields: [
-        { field: "category_id", table:"categories"},
-        { field:"unit_id",table:"units" },
-      ],
-    }
-    this.dataService.getData(body).subscribe(res=> {
-      console.log(res)
+    let urlPath =  "customs/products/";
+    this.dataService.getDataWithGet(urlPath).subscribe(res=> {
+      // console.log(res)
       this.products = res;
       this.loadUsers()
     })
   }
+
   async loadUsers() {
-    let body = {table: 'users', where: ` role = ${+this.isIncoming()?'2':'2'} ` }
+    let body = {table: 'users', where: ` role = ${+this.isIncoming()?'2':'3'} ` }
     this.dataService.getData(body).subscribe(res=>{
-      console.log(res)
+      // console.log(res)
       this.users = res;
     })
   }
@@ -68,53 +69,65 @@ export class PosComponent implements OnInit{
   filteredProducts() {
     let list = this.products
     if (this.categoryId){
-      list = this.products.filter(value => value.category_id.doc_id == this.categoryId)
+      list = this.products.filter(value => value?.category_id == this.categoryId)
     }
     const rg = this.keyword ? new RegExp(this.keyword, "gi") : null;
     return list.filter((p) => !rg || p.name.match(rg));
   }
   addToCart(product:any) {
     const index = this.findCartIndex(product);
-    if (index === -1) {
-      this.cart.push({
-        doc_id: product.doc_id,
-        image: product.product_image,
-        category: product.category_id.name,
-        name: this.getProductName(product),
-        price: product[this.getPriceKeyItem()],
-        option: product.option,
-        qty: 1,
-      });
-    } else {
-      if (+this.products[index].quantity > +this.cart[index].qty || this.isIncoming() || !this.linkWithStock){
-         this.cart[index].qty += 1;
-      }else {
-        this.cart[index].qty = +this.products[index].quantity;
-        this.dataService.createMessage("warning","الكمية في المخزن غير كافية")
+    if(+product[this.getPriceKeyItem()] || this.isIncoming()){
+      if (index === -1) {
+        if(+product.quantity > 0 || this.isIncoming() || !this.linkWithStock){
+          this.cart.push({
+            doc_id: product.doc_id,
+            image: product.product_image,
+            category: product?.category,
+            name: this.getProductName(product),
+            price: product[this.getPriceKeyItem()],
+            option: product.option,
+            qty: 1,
+          });
+        }else {
+          this.dataService.createMessage("warning","الكمية في المخزن غير كافية")
+        }
+      } else {
+        if (+product.quantity > +this.cart[index].qty || this.isIncoming() || !this.linkWithStock){
+           this.cart[index].qty += 1;
+        }else {
+          this.cart[index].qty = +this.products[index].quantity;
+          this.dataService.createMessage("warning","الكمية في المخزن غير كافية")
+        }
       }
+      this.beep();
+    }else{
+      this.dataService.createMessage("warning","لم تقم بتحديد سعر للمنتج")
     }
-    this.beep();
   }
 
-  quantityChange(product:any,event:any) {
+  quantityChange(cartItem:any,event:any) {
     let quantity = event.target.value
-    const index = this.findCartIndex(product);
+    const index = this.findCartIndex(cartItem);
+    const productIndex = this.findProductIndex(cartItem);
     if (+quantity < 1){
       event.target.value = 1;
       quantity = 1
     }
-    if (+this.products[index].quantity > +quantity || this.isIncoming() || !this.linkWithStock){
+    if (+this.products[productIndex].quantity > +quantity || this.isIncoming() || !this.linkWithStock){
       this.cart[index].qty = +quantity;
     }else {
-      event.target.value = +this.products[index].quantity;
-      this.cart[index].qty = +this.products[index].quantity;
+      event.target.value = +this.products[productIndex].quantity;
+      this.cart[index].qty = +this.products[productIndex].quantity;
       this.dataService.createMessage("warning","الكمية في المخزن غير كافية")
     }
     this.beep();
   }
 
-  findCartIndex(product:any) {
-    return this.cart.findIndex((p) => p.doc_id === product.doc_id);
+  findCartIndex(cartItem:any) {
+    return this.cart.findIndex((p) => p.doc_id === cartItem.doc_id);
+  }
+  findProductIndex(product:any) {
+    return this.products.findIndex((p) => p.doc_id === product.doc_id);
   }
   addQty(item:any, qty:any) {
     const index = this.cart.findIndex((i) => i.doc_id === item.doc_id);
@@ -166,7 +179,7 @@ export class PosComponent implements OnInit{
   }
   submit() {
     const time = new Date();
-    this.receiptNo = `${Math.round(time.getTime() / 1000)}`;
+    // this.receiptNo = `${Math.round(time.getTime() / 1000)}`;
     this.receiptDate = this.dateFormat(time);
     let total = this.getTotalPrice() -  this.discount
     let body: any = {
@@ -177,7 +190,6 @@ export class PosComponent implements OnInit{
       incoming: this.isIncoming()?1:0
     }
     let innerItemData:any[] = []
-    let innerItemData2:any[] = []
     this.cart.forEach(value => {
       innerItemData.push(
         {
@@ -209,11 +221,14 @@ export class PosComponent implements OnInit{
         body,
         true
       ).subscribe((res:any)=>{
+        // console.log(res)
+        this.loadProducts()
         if (res.msg == true){
           if (this.isIncoming()){
             this.dataService.createMessage('success',`تمت العملية بنجاح`)
             this.router.navigate(["/incoming-management"])
           }else {
+            this.receiptNo = res.saleId??""
             this.isShowModalReceipt = true;
           }
         }else {
@@ -235,6 +250,7 @@ export class PosComponent implements OnInit{
   }
   closeModalReceipt() {
     this.isShowModalReceipt = false;
+    this.clear()
   }
   dateFormat(date:Date) {
     const formatter = new Intl.DateTimeFormat('id', { dateStyle: 'short', timeStyle: 'short'});
@@ -261,27 +277,12 @@ export class PosComponent implements OnInit{
     // sound.onended = () => delete(sound);
   }
   printAndProceed() {
+    this.router.navigate([`/pos/invoice/${this.receiptNo}`])
+  }
 
-    const receiptContent = document.getElementById('receipt-content');
-    const titleBefore = document.title;
-    const printArea = document.getElementById('print-area');
-    if (printArea === null) {
-      return
-    }
-    if (receiptContent === null) {
-      return
-    }
-    printArea.innerHTML = receiptContent.innerHTML;
-    document.title = this.receiptNo;
-
-    window.print();
-    this.isShowModalReceipt = false;
-
-    printArea.innerHTML = '';
-    document.title = titleBefore;
-
-    // TODO save sale data to database
-    this.clear();
+  closeReciept(){
+    this.isShowModalReceipt = false
+    this.clear()
   }
 
   priceFormat = (price:number) => priceFormat(price);

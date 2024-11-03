@@ -1,39 +1,39 @@
-<div class="w-100 mt-5">
+<div class="mt-5 w-100">
   <h2 class="mb-10">
     معلومات تفصيلية
   </h2>
   <div class="flex w-100">
     <div class="w-50">الاسم</div>
-    <div class="w-50">{{getValue(user.name)}}</div>
+    <div class="w-50">{{getValue(user?.name)}}</div>
   </div>
   <nz-divider></nz-divider>
   <div class="flex w-100">
     <div class="w-50">رقم الهاتف</div>
-    <div class="w-50">{{getValue(user.phone)}}</div>
+    <div class="w-50">{{getValue(user?.phone)}}</div>
   </div>
   <nz-divider></nz-divider>
   <div class="flex w-100">
     <div class="w-50">العنوان</div>
-    <div class="w-50">{{getValue(user.address)}}</div>
+    <div class="w-50">{{getValue(user?.address)}}</div>
   </div>
   <nz-divider></nz-divider>
   <div class="flex w-100">
     <div class="w-50">الايميل</div>
-    <div class="w-50">{{getValue(user.email)}}</div>
+    <div class="w-50">{{getValue(user?.email)}}</div>
   </div>
   <nz-divider></nz-divider>
   <div class="flex w-100">
     <div class="w-50">اخر تسجيل دخول</div>
-    <div class="w-50">{{getValue(user.last_login)}}</div>
+    <div class="w-50">{{getValue(user?.last_login)}}</div>
   </div>
   <nz-divider></nz-divider>
   <div class="flex w-100">
     <div class="w-50">الحالة</div>
-    <div class="w-50">{{getValue(user.status)== '1'?'نشط':'معلق'}}</div>
+    <div class="w-50">{{getValue(user?.status)== '1'?'نشط':'معلق'}}</div>
   </div>
   <nz-divider></nz-divider>
   <div class="flex w-100">
     <div class="w-50">الجنس</div>
-    <div class="w-50">{{getValue(user.gender) == '1'?'ذكر':'انثى'}}</div>
+    <div class="w-50">{{getValue(user?.gender) == '1'?'ذكر':'انثى'}}</div>
   </div>
 </div>

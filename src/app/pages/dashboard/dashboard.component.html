@@ -1,11 +1,3 @@
-<!--<div class="row mb-5">-->
-<!--  <img class="logo" src="assets/img/logo.png">-->
-<!--  <div class="mr-20">-->
-<!--    <h2>نظام مبيعات</h2>-->
-<!--    <h1 class="mt-1">نظام ادارة المخازن والمبيعات</h1>-->
-<!--  </div>-->
-<!--  <h2 class="p-color pt-12 mr-10"> - مرحباً {{authService.department.user}}</h2>-->
-<!--</div>-->
 <div style="height: 85vh; overflow: auto">
   <div style="padding: 0 2.5rem 1rem 0;" class="row">
     <button *ngIf="!mainReports" nzShape="circle" nz-button (click)="back()" nzType="default">
@@ -28,7 +20,8 @@
       <span nz-icon [nzType]="body.dashboard[i].icon"></span>
     </div>
   </div>
+  <br>
   <div [class]="reportPage || reportObject?.customApiBody?.table != 'transactions'?'':'w-1/2'">
-    <app-table-data [pagination]="false" [inputTableData]="reportObject" [pageTitle]="pageTitle"/>
+    <app-table-data [inputTableData]="reportObject" [pageTitle]="pageTitle"/>
   </div>
 </div>

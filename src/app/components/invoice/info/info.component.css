@@ -1,0 +1,45 @@
+table{
+    width: 100%;
+    /* text-align: left; */
+  }
+  thead,th,td{
+    border: 1px solid rgb(225, 225, 225);
+  }
+  
+  th, td{
+    font-size: 12px;
+    text-align: right;
+    padding-right: 1rem;
+    /* padding: 5px; */
+  }
+  .remove-button{
+    color: red;
+    height: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-align: center;
+    padding: 0;
+  }
+  nz-select {
+    width: 200px;
+  }
+  input{
+    width: 100%;
+    text-align: left;
+    padding-left: 1rem;
+  }
+  textarea:focus, input:focus{
+    outline: 1px rgb(0, 26, 255) solid;
+    background-color: cornsilk;
+  }
+  input:hover{
+    background-color: cornsilk;
+  }
+  
+  .table-h{
+    min-height: 400px;
+  }
+  .none-border{
+    border: none;
+  }
+  

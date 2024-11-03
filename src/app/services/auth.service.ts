@@ -3,22 +3,19 @@ import {Router} from "@angular/router";
 import {GlobalVariable} from "../common/consts";
 import {HttpClient} from "@angular/common/http";
 import DataSources from "../common/data_sources/data-sources";
+import { Session } from './session-model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private tokenKey = 'token';
-  department = {
-    name:"",
-    user:"",
-    userId:"",
-    permissionType:1,
-    departmentId:1
-  };
+  sessionUser: Session = {};
   appConfig = {price:""}
   isAdmin:boolean = false
   sideBarList: any[] = [];
+  settingsList: any[] = [];
+  outputsList: any[] = [];
   constructor(
     private http:HttpClient,
     private router: Router
@@ -34,11 +31,11 @@ export class AuthService {
   }
   public getSessionStatus() {
     const body = {sessionId:this.getToken()}
-    // console.log(JSON.stringify(body))
+    console.log(JSON.stringify(body))
     return  this.http.post<any[]>(GlobalVariable.BASE_API_URL+"auth/sessions/",body)
       .subscribe((value:any) => {
         this.appConfig = value.appConfig
-        console.log(this.appConfig);
+        // console.log(this.appConfig);
         if (value.running === true){
           this.sidePushing(value.session)
         }else{
@@ -64,30 +61,38 @@ export class AuthService {
       return localStorage.setItem(this.tokenKey,session.sessionId);
   }
 
-  sidePushing(session:any){
-    console.log("side push")
-    this.isAdmin = session.isAdmin
-    this.department = {
-      name: session.departmentName,
-      user: session.name,
-      userId: session.user_id,
-      permissionType: +session.permissionType,
-      departmentId: +session.departmentId
-    }
+  sidePushing(session:Session){
+    // console.log("side push")
+    this.isAdmin = session.isAdmin!
+    this.sessionUser = session
     this.sideBarList = []
+    // console.log("session: ",session)
     if (session.isAdmin){
+      console.log("is Admin side push")
       this.sideBarList =  new DataSources().pagesDataTable
+      this.settingsList =  new DataSources().settingsList.filter(item=> !item?.hidAsBarButton)
+      this.outputsList =  new DataSources().outputsList.filter(item=> !item?.hidAsBarButton)
     }else {
       new DataSources().pagesDataTable.forEach(value => {
+        let perList: number[] = value.permissionsUserRole ?? [];
+        if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
+          this.sideBarList.push(value)
+          }
+      })
+      new DataSources().settingsList.forEach(value => {
         let perList: number[] = value.permissions ?? [];
-        // console.log(JSON.stringify(perList.includes(1)))
-          if (perList.includes(+session.permissionType)){
-            this.sideBarList.push(value)
+          if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
+            this.settingsList.push(value)
+          }
+      })
+      new DataSources().outputsList.forEach(value => {
+        let perList: number[] = value.permissions ?? [];
+          if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
+            this.outputsList.push(value)
           }
       })
     }
   }
 
-  isDepartment = () => this.department.permissionType == 0
-  isManager = () => this.department.permissionType == 1
+  isManager = () => this.sessionUser.isAdmin
 }

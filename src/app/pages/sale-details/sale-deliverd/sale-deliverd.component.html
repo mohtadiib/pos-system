@@ -1,0 +1,38 @@
+<button nz-button (click)="setUpdateMode()" [nzType]="updateSaleDelivery?'primary':'default'">
+  <span nz-icon nzType="edit"></span>
+</button>
+<form [formGroup]="userForm" (ngSubmit)="submitForm()" nz-form>
+  <nz-form-item
+    *ngFor="let keyItem of keysEditModel; let i = index"
+    style="margin-bottom: 1rem"
+  >
+    <nz-form-label
+      *ngIf="!tableData.headers![i]?.disabled"
+      [nzSpan]="7"
+      [nzRequired]="checkIsRequired(tableData.headers![i])"
+      nzFor="{{ keyItem! }}"
+    >
+      {{ tableData.headers![i]?.name }}
+    </nz-form-label>
+    <nz-form-control
+      *ngIf="!tableData.headers![i]?.disabled"
+      [nzSpan]="5"
+      nzErrorTip="!الحقل ضروري"
+    >
+      <app-data-edit-type
+        [header]="tableData.headers![i]"
+        [value]="tableData.model[keyItem]"
+        [keyItem]="keyItem"
+      ></app-data-edit-type>
+    </nz-form-control>
+  </nz-form-item>
+  <button *ngIf="!itemsDelivered || updateSaleDelivery" type="submit" nz-button >
+    حفظ البيانات
+    <span
+      nz-icon
+      nzType="save"
+      nzTheme="outline"
+      style="font-size: 16px; color: #ffffff"
+    ></span>
+  </button>
+</form>

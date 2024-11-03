@@ -2,7 +2,7 @@ import {Component, HostListener, Input, OnChanges, OnInit } from '@angular/core'
 import {TableDataService} from "./table-data.service";
 import {TableData} from "../../common/data_sources/side-model";
 import { FormGroup } from '@angular/forms';
-import {NzMessageService} from "ng-zorro-antd/message";
+// import {NzMessageService} from "ng-zorro-antd/message";
 import {Router} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
 @Component({
@@ -16,16 +16,26 @@ export class TableDataComponent implements OnInit, OnChanges{
   @Input() inputTableData!: TableData;
   @Input() foreignId!: string;
   @Input() pageTitle!: string;
-  @Input() pagination: boolean = true;
+
   tableData!:TableData
   editCache: { [key: string]: { edit: boolean; data: any } } = {};
   listOfData: any[] = [];
+  listOfData2: any[] = [];
   keysEditModel: any[] = [];
   editingObject: { recordId: string, adding: boolean } = { recordId: "",adding: false };
   tableLoading: boolean = false
   itemFromEditComponent: any = { price: 0}
 
   searchValue: string = ""
+
+  //Pagination
+  pagination:any = {
+    perPage:10,
+    rowsCount:1,
+    paginationIndex:1,
+    startAt: 0,
+  }
+
   constructor(
     public tableApiService:TableDataService,
     public router:Router,
@@ -33,17 +43,49 @@ export class TableDataComponent implements OnInit, OnChanges{
   }
 
   //Table Search Field **************************************************************************
-  inputSearchChange(){
-    console.log(this.searchValue)
-  }
-  filteredListOfData() {
-    let list = this.listOfData
-    const rg = this.searchValue ? new RegExp(this.searchValue, "gi") : null;
-    if (this.tableData?.searchable?.keyFilter){
-    console.log(this.listOfData[0])
-      list = list.filter((p) => !rg || p.client_id.name.match(rg));
+  // inputSearchChange(){
+  //   this.searchItem()
+  // }
+  // filteredListOfData() {
+  //   let list = this.listOfData
+  //   const rg = this.searchValue ? new RegExp(this.searchValue, "gi") : null;
+  //   let key = "name"
+  //   if (this.tableData?.searchable?.keyFilter){
+  //      key = this.tableData?.searchable?.keyFilter
+  //   }
+  //   // console.log(key)
+  //   list = list.filter((p) => !rg  || p?.doc_id?.match(rg)  || p?.name?.match(rg) || p[key]["name"]?.match(rg));
+
+  //   return list
+  // }
+
+  //DB Seach
+  searchItem(limitRange:any = {}) {
+    if(this.searchValue){
+      let table = this.tableData.table || this.tableData.customApiBody?.table
+      let body = {
+        table: table,
+        field: "name",
+        value: this.searchValue,
+        limitRange: { start: 1, limitTo: 10 },
+      }
+      if(limitRange.start){
+        body.limitRange = limitRange
+      }
+      this.tableApiService.getData(body,"search/").subscribe((res:any)=> {
+        console.log(res)
+        if(res?.data){
+          this.listOfData = res.data;
+          this.pagination.rowsCount = res.rowsCount
+        }else{
+          this.listOfData = res;
+        }
+        this.updateEditCache();
+        this.tableLoading = false
+      })
+    }else{
+       this.listOfData = this.listOfData2
     }
-    return list
   }
   // modelData = () => this.tableData2[this.index];
   receiveMessage($event:any){
@@ -115,11 +157,13 @@ export class TableDataComponent implements OnInit, OnChanges{
   checkCustomApi(input:boolean){
     let body = {table:this.tableData.table}
     if (this.tableData.customApiBody?.foreignField && this.foreignId){
+      console.log("foreignId 1: ",this.foreignId)
       let apiBody = this.tableData.customApiBody
       apiBody.foreignField[Object.keys(apiBody.foreignField)[0]] = this.foreignId
       // apiBody.innerTable = innerTableName
       body = apiBody
     }else if(this.tableData.customApiBody){
+      console.log("foreignId 2: ",this.foreignId)
       body = input?this.tableData.customApiBody.table:this.tableData.customApiBody
     }
     return body
@@ -172,14 +216,22 @@ export class TableDataComponent implements OnInit, OnChanges{
     this.tableLoading = true
     this.tableData = this.inputTableData
     this.listOfData = []
+    this.listOfData2 = []
     this.keysEditModel = Object.keys(this.tableData.model);
     //Delete doc_id
     this.keysEditModel.slice()
     let body = this.checkCustomApi(false)
     // console.log(JSON.stringify(body))
-    this.tableApiService.getData(body).subscribe(res=> {
+    this.tableApiService.getData(body).subscribe((res:any)=> {
       // console.log(res)
-      this.listOfData = res;
+      if(res?.data){
+        this.listOfData = res.data;
+        this.listOfData2 = res.data;
+        this.pagination.rowsCount = res.rowsCount
+      }else{
+        this.listOfData = res;
+        this.listOfData2 = res;
+      }
       this.updateEditCache();
       this.tableLoading = false
     })
@@ -191,8 +243,8 @@ export class TableDataComponent implements OnInit, OnChanges{
     let data: any = this.form.value
     // data.id = this.listOfData[index].id
     delete data.doc_id
-    console.log(this.form.valid)
-    console.log(this.form.value)
+    // console.log(this.form.valid)
+    // console.log(this.form.value)
     if (this.form.valid){
       this.storeData(data,()=> {
         this.editCache[doc_id].edit = false;
@@ -209,7 +261,7 @@ export class TableDataComponent implements OnInit, OnChanges{
       this.editingObject.adding,
       data
     ).subscribe((res:any)=> {
-      console.log(res)
+      // console.log(res)
       if (res.msg == true){
         this.tableApiService.createMessage('success',`تمت العملية بنجاح`)
         this.tableApiService.focusField = false
@@ -221,7 +273,7 @@ export class TableDataComponent implements OnInit, OnChanges{
         if (res.msg == "Session Error"){
           this.tableApiService.createMessage('error',"خطا في الجلسة، قم باعادة تسجيل الدخول")
         }else {
-          this.tableApiService.createMessage('error',res?.content)
+          this.tableApiService.createMessage('error',res?.content || res?.message)
         }
       }
       //close focusing input
@@ -233,6 +285,7 @@ export class TableDataComponent implements OnInit, OnChanges{
       tableName = this.tableData.customApiBody.table
     }
     this.tableApiService.deleteRecord(tableName!,doc_id).subscribe((res)=>{
+      this.tableApiService.createMessage('success',`تمت العملية بنجاح`)
       this.listOfData = this.listOfData.filter(d => d.doc_id !== doc_id);
       console.log(res)
     })
@@ -246,9 +299,23 @@ export class TableDataComponent implements OnInit, OnChanges{
   routeTo(path:string) {
     this.router.navigate([path]);
   }
+
+  
+  changePaginationIndex(index:any) {
+    // console.log(index)
+    this.tableData.customApiBody.limitRange = { start: index, limitTo: 10 }
+    if(this.searchValue){
+      this.searchItem(this.tableData.customApiBody.limitRange)
+    }else{
+      this.getData()
+    }
+  }
+
   // Check if table content action buttons of delete and update and more button
   checkActionButtons = (value:string,custom: boolean = false) => custom?null:!this.tableData?.customCrud || this.tableData.customCrud?.includes(value)
+
   showAddButton = () => !this.tableData?.customCrud || this.tableData?.customCrud && this.tableData!.customCrud?.includes('add')
+  
   checkIfAddButton = () => !this.tableData?.customCrud
     || this.tableData?.customCrud!.length && !this.tableData!.customCrud?.includes('add')
     || this.tableData?.customCrud!.length == 1 && this.tableData!.customCrud?.includes('add')
@@ -256,6 +323,7 @@ export class TableDataComponent implements OnInit, OnChanges{
 
 
   // get price from general config app
-  getCustomValue = (data:any,keyItem:string,i:number) => this.tableData.headers![i]?.generalPrice? +this.authService.appConfig.price * +this.editCache[data.doc_id!].data?.size  :this.editCache[data.doc_id!].data[keyItem]
+  getCustomValue = (data:any,keyItem:string,i:number) => this.tableData.headers![i]?.generalPrice?
+   +this.authService.appConfig.price * +this.editCache[data.doc_id!].data?.size  :this.editCache[data.doc_id!].data[keyItem]
 }
 

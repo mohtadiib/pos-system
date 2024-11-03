@@ -1,0 +1,30 @@
+<div class="w-full row">
+  <div class="flex mt-1 fs-12 w-50 left">
+    <div class="mr-10">زمن الطباعة: </div>
+    <div>{{currentDate}}</div>
+  </div>
+  <div class="flex mt-1 mr-20-p fs-12 w-50 left">
+    <div class="mr-10">رقم العملية. :</div>
+    <div>{{sale?.doc_id}}</div>
+  </div>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th colSpan="3">
+        الإسم
+      </th>
+      <th colSpan="1">
+        {{sale?.clientName}}
+      </th>
+    </tr>
+    <tr>
+      <th colSpan="3">
+        رقم الهاتف
+      </th>
+      <th colSpan="1">
+        {{sale.clientPhone? sale.clientPhone+'249':"غير موجود"}}
+      </th>
+    </tr>
+    </thead>
+</table>
