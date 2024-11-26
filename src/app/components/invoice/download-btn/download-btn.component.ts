@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import fonts from '../../../common/fonts.json';
+import { getCurrentDateTime } from 'src/app/common/math';
 
 @Component({
   selector: 'app-download-btn',
@@ -10,6 +11,7 @@ import fonts from '../../../common/fonts.json';
 })
 export class DownloadBtnComponent {
   @Input() invoiceData: any = {}
+
 
   logo = fonts['logo']; // logo with Base64
 
@@ -60,7 +62,7 @@ export class DownloadBtnComponent {
     doc.text(`الخصم: ${this.invoiceData.discount} ريال`, 500, finalY + 40, { align: 'right' });
 
     // حفظ ملف PDF
-    doc.save('invoice.pdf');
+    doc.save(`Sales-invoice-${getCurrentDateTime()}.pdf`);
   }
 
 }

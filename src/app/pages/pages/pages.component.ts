@@ -32,7 +32,7 @@ export class PagesComponent implements OnInit{
       if (value.children){
         // @ts-ignore
         let route = this.activatedRoute.url["_value"][0].path
-        console.log(route)
+        // console.log(route)
         value?.children.forEach((sub:any)=> {
           if (sub.router == route){
             page = sub

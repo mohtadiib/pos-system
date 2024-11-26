@@ -1,0 +1,78 @@
+<div class="payment-container">
+  <div class="row">
+    <h1 class="fb">{{userDebit?getDebitTitle():"الدفع"}}</h1>
+    <button (click)="goToTransactions()" style="margin-right: 60%;" [nzLoading]="loading" nz-button nzSize="small" >
+      <span nz-icon nzType="history"></span>
+      العمليات السابقة
+    </button>
+  </div>
+<br>
+<table>
+    <tbody>
+        <tr>
+          <td>
+            <h4>اجمالي {{userDebit?"الديون":"الفاتورة"}}:</h4>
+          </td>
+          <td>
+            <h3  class="mr-20 fb" style="color: rgb(85, 0, 128);">
+              {{getTotal()}}
+            </h3>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <h4>المدفوع:</h4>
+          </td>
+          <td>
+            <h3  class="mr-20 fb" style="color: rgb(85, 0, 128);">
+              {{getPayed()}}
+            </h3>
+          </td>
+        </tr>
+        <tr *ngIf="getDue()">
+          <td>
+            <h4>المتبقي: </h4>
+          </td>
+          <td>
+            <h3  class="mr-20 fb" style="color: rgb(176, 83, 21);">
+              {{getDueAmount()}}
+            </h3>
+          </td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<form *ngIf="getDue()" nz-form [formGroup]="paymentForm" (ngSubmit)="submitForm()">
+    <nz-form-item class="mt-1 mb-1" style="margin-bottom: 1rem;">
+      <nz-form-label [nzSpan]="5" nzFor="amount">المبلغ المستلم</nz-form-label>
+      <nz-form-control [nzSpan]="10" nzErrorTip="اقل مبلغ 1 واعلى مبلغ {{this.getDueAmount()}}">
+        <nz-input-number-group nzAddOnAfter="SDG">
+          <nz-input-number class="w-50" formControlName = "amount" [nzStep]="1" [nzMin]="1" [nzMax]="getDue()" ></nz-input-number>
+        </nz-input-number-group>      
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="mt-1 mb-1" style="margin-bottom: 1rem;">
+      <nz-form-label [nzSpan]="5" nzFor="pay_type">طريقة الدفع</nz-form-label>
+      <nz-form-control [nzSpan]="9" nzErrorTip="field is required!">
+        <nz-select
+          formControlName = "pay_type"
+          >
+          <nz-option nzValue="0" nzLabel="كاش"></nz-option>
+          <nz-option nzValue="1" nzLabel="بنكك"></nz-option>
+          <nz-option nzValue="2" nzLabel="محفظة العميل"></nz-option>
+        </nz-select>  
+      </nz-form-control>
+    </nz-form-item>
+    <br>
+    <button [nzLoading]="loading" nz-button nzSize="large" nzType="primary" >
+      <span nz-icon nzType="save"></span>
+      حفظ البيانات
+    </button>    
+</form>
+
+<nz-result *ngIf="!getDue()"
+      nzStatus="success"
+      [nzTitle]="userDebit?'الدين مصفر':'اكتمل الدفع!'"
+    >
+</nz-result>
+</div>

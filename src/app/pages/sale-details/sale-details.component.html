@@ -1,30 +1,42 @@
 <div class="inner-content">
-    <h1 class="fb">
-        عملية بيع رقم / {{id}}
+  <div class="row">
+    <app-back-btn />
+    <h1 class="mr-5 fb invoice-title">
+      فاتورة رقم / {{id}}
     </h1>
-    <div class="container">
-      <nz-tabset>
-        <nz-tab  [nzTitle]="titleTemplate">
-          <ng-template #titleTemplate>
-            <span nz-icon nzType="read"></span>
-            العناصر ( المنتجات )
-          </ng-template>
-          <app-table-data [inputTableData]="tableData[0]" heightTable="30"/>
-        </nz-tab>
-        <nz-tab  [nzTitle]="titleTemplate2">
-            <ng-template #titleTemplate2>
-              <span nz-icon nzType="read"></span>
-              المستلم
-            </ng-template>
-            <app-sale-deliverd [saleId]="id"/>
-        </nz-tab>
-        <nz-tab  [nzTitle]="titleTemplate3">
-            <ng-template #titleTemplate3>
-              <span nz-icon nzType="read"></span>
-              الفاتورة
-            </ng-template>
-            <app-invoice />
-        </nz-tab>
-      </nz-tabset>
-    </div>
+  </div>
+  <div class="container">
+    <nz-tabset>
+      <nz-tab [nzTitle]="titleTemplate">
+        <ng-template #titleTemplate>
+          <span nz-icon nzType="read"></span>
+           المنتجات والمستلم
+        </ng-template>
+        <div class="row">
+          <div style="width: 60%;">
+            <app-table-data [inputTableData]="tableData" heightTable="30" />
+          </div>
+          <div style="width: 40%;">
+            <app-sale-deliverd [saleId]="id" />
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab [nzTitle]="titleTemplate2">
+        <ng-template #titleTemplate2>
+          <span nz-icon nzType="read"></span>
+         الدفعيات
+         <span *ngIf="!isNotPayed()" nz-icon style="color: rgb(15, 183, 15); margin-left: 5px;" nzType="check-circle" nzTheme="fill"></span>
+        </ng-template>
+        <app-payment [saleId]="id" />
+        <!-- <app-table-data [inputTableData]="tableData[1]" [foreignId]="id" heightTable="30"/> -->
+      </nz-tab>
+      <nz-tab [nzTitle]="titleTemplate3">
+        <ng-template #titleTemplate3>
+          <span nz-icon nzType="read"></span>
+          الفاتورة
+        </ng-template>
+        <app-invoice />
+      </nz-tab>
+    </nz-tabset>
+  </div>
 </div>

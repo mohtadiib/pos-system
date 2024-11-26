@@ -46,6 +46,7 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
         this.form.controls[this.keyItem].setValue(`${this.value.doc_id}`);
       }else if (this.header?.type == 'image_view') {
         this.tableDataService.selectedImage.image = this.value
+        this.form.controls[this.keyItem].setValue(this.value);
       }else {
         this.form.controls[this.keyItem].setValue(this.value);
       }
@@ -118,6 +119,15 @@ export class DataEditTypeComponent implements OnInit, AfterViewInit{
       if (this.header?.setField){
         this.form.controls[this.header?.setField].setValue(item.name);
       }
+    }
+  }
+
+  getValue(value:any){
+    if(typeof +value == 'number' && +value > 0){
+      let numValue: number = +value
+      return Number(numValue.toFixed(2));
+    }else{
+      return value
     }
   }
 }

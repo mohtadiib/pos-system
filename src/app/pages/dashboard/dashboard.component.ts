@@ -15,26 +15,12 @@ export class DashboardComponent implements OnInit{
 
   @ViewChild(TableDataComponent) tableDataComponent: TableDataComponent | undefined
   sideBarList: any[] = new DataSources().pagesDataTable;
-  settingsList: any[] = new DataSources().settingsList;
-  outputsList: any[] = new DataSources().outputsList;
   reportObject: any = {}
   mainReports:boolean = true
   pageTitleBackup = {report:"العمليات على المحفظة",daily:"آخر خمسة عمليات على المحفظة"}
   pageTitle = this.pageTitleBackup.daily
   currentDate: Date = new Date()
-  body:any = {
-    dashboard:[
-      {table:"sales", sumField:"total", where:" incoming = 0 ", type: "all_sales", title: "اجمالي المبيعات", icon:"file-text" },
-      {table:"sales", sumField:"total", where:" incoming = 0 and pay_type = 2 ", type: "debts_sales", title: "مبيعات بالدين", icon:"file-done" },
-      // {table:"sales", sumField:"total", where:" incoming = 1 ", type: "all_incoming", title: "الوارد", icon:"file-done" },
-      // {table:"products", type: "all_products", title: "عدد الاصناف", icon:"pic-center" },
-      {table:"products", where: " minimum_qty > quantity", type: "products_minimum_quantity", title: "منتجات قاربت على الانتهاء", icon:"pic-center" },
-      {table:"outputs", sumField:"moneyValue", where:" status != 2 ", type: "all_outputs", title: "المنصرفات", icon:"pic-center" },
-      {table:"debts", sumField:"money_value", where:"", type: "all_debts", title: "الديون", icon:"pic-center" },
-      {table:"final_money", type: "all_transactions", title: "المبلغ المتوفر", icon:"pic-center" },
-    ]
-  }
-  dashboardListBackup:any = this.body.dashboard
+  // dashboardListBackup:any = this.body.dashboard
   tables:any = {}
   reportPage:boolean = this.router.url === '/report'
   date :any[] = [];
@@ -42,78 +28,30 @@ export class DashboardComponent implements OnInit{
               private router: Router) {}
   getData(){
     this.tables.values = []
-    // console.log(this.body.dashboard)
-    this.dataService.getData(this.body).subscribe((value:any) => {
+    const url = "customs/dashboard/"
+    this.dataService.getDataWithGet(url).subscribe((value:any) => {
       // console.log(value)
       this.tables.values = value.tables
     })
   }
   ngOnInit(): void {
-    this.pageTitle = this.pageTitleBackup.daily
-    if (this.reportPage){
-      this.pageTitle = this.pageTitleBackup.report
-    }
-    this.setReportModal()
-    if (!this.reportPage)
-    this.setDatesOnDashboard([this.currentDate,this.currentDate])
     this.getData()
+    this.setReportModal()
   }
+
   setReportModal(modelListFilter:string = "transactions",where:any = null){
     if (modelListFilter == "final_money"){
       modelListFilter = "transactions"
     }
     let object = this.sideBarList.find(value => value.path == modelListFilter)
-    if(!object){
-      object = this.settingsList.find(value => value.path == modelListFilter)
-    }
-    if(!object){
-      object = this.outputsList.find(value => value.path == modelListFilter)
-    }
     this.reportObject = object.tableData
     this.reportObject.customCrud = []
+    this.reportObject.customApiBody.limitRange = { start: 1, limitTo: 5 },
     this.reportObject.customApiBody.where = where
   }
-  setFilter(filter:string,where:any = null,index:number = 0){
-     this.mainReports = false
-     this.pageTitle = this.body.dashboard[index].title
-     this.body.dashboard = this.body.dashboard.filter((value:any) => value.table == filter)
-     this.setReportModal(this.body.dashboard[0].table,where)
-     this.getData()
-   }
+
   back() {
     this.mainReports = true
-    this.body.dashboard = this.dashboardListBackup
-    this.setReportModal()
-    this.getData()
-  }
-
-  onChangeDateRange(result: Date[]): void {
-    this.resetDashboardList()
-    if (!this.reportObject.customApiBody.backUpWhere){
-      this.reportObject.customApiBody.where = this.reportObject.customApiBody?.backUpWhere
-    }
-    if (result.length){
-      this.setDatesOnDashboard(result)
-    }else {
-      this.reportObject.customApiBody.where = this.reportObject.customApiBody.backUpWhere
-      this.getData()
-      this.tableDataComponent?.getData()
-    }
-  }
-
-  setDatesOnDashboard(result:Date[]){
-    this.body.dashboard.forEach((value:any) => {
-      if (value?.where){
-        value.backUpWhere = value.where
-        value.where += this.setDateFilter(this.getListFilterDates(result),value.where)
-      }else {
-        value.where = this.setDateFilter(this.getListFilterDates(result),value.where)
-      }
-    })
-    this.reportObject.customApiBody.backUpWhere = this.reportObject.customApiBody?.where
-    this.reportObject.customApiBody.where =  this.setDateFilter(this.getListFilterDates(result),this.reportObject.customApiBody.where)
-    this.reportObject.customApiBody.limit = 5
-    this.tableDataComponent?.getData()
   }
 
   getListFilterDates(result: Date[]){
@@ -130,18 +68,21 @@ export class DashboardComponent implements OnInit{
   }
 
   setDateFilter(datesObject:any,where:string = ""){
-    if (where){
+    if(where){
       return ` and date(created_at) between ${datesObject.firstDate} and ${datesObject.lastDate} `
-    }else {
+    }else{
       return ` date(created_at) between ${datesObject.firstDate} and ${datesObject.lastDate} `
     }
   }
 
-  resetDashboardList(){
-    this.body.dashboard.forEach((value:any) => {
-      value.where = value?.backUpWhere
-    })
-  }
   priceFormat = (price:number) => priceFormat(price);
+
+  onChangeDateRange(event:any){
+
+  }
+
+  selectCard(item:any){
+    this.router.navigate([`dashboard_details/${item.table}/${item.title}`])
+  }
 
 }

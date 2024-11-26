@@ -1,16 +1,17 @@
 <button [routerLink]="getRoutes()" 
 *ngIf="header?.type == 'list' || header?.type == 'details' || header?.type == 'tags_list_choices' && value=='1'" 
  (click)="showModal()" nz-button nzType="default">
-  {{header?.type == 'details'?'المزيد':value}}
+  {{header?.type == 'details'?'عرض':value}}
   <span nz-icon nzType="eye"></span>
 </button>
 <!--Normal View-->
-<div (click)="showModalCompleteModal()" *ngIf="header?.type == ''" [style]="{color: value?'':'darkgrey',cursor: header?.completeModel?'pointer':''}" >
-  {{value?value:'لم يحدد'}}
+<div (click)="showModalCompleteModal()" *ngIf="header?.type == ''" 
+[style]="{color: value?'':'darkgrey',cursor: header?.completeModel || header?.deliverdModel?'pointer':''}" >
+  {{value?getValue(value):'لم يحدد'}}
 </div>
 <!--Online List-->
 <div *ngIf="header?.type == 'online_list'" [style]="{color: value?'':'darkgrey'}">
-  {{value? header.sub?.table? value[header.sub.table].name:value.name:'لم يحدد'}}
+  {{value? header.sub?.table? value[header.sub.table].name:value.name?value.name:value:'لم يحدد'}}
 </div>
 <!--Status-->
 <nz-tag *ngIf="header?.type == 'tag'" [nzColor]="value == '1'?
@@ -58,7 +59,42 @@
   >
     <ng-container *nzModalContent>
       المبلغ المستحق هو {{dueAmount}}
-      <input (keyup)="changePayed()" #input [(ngModel)]="payed" [placeholder]="header?.completeModel?.placeholder" type="number" nz-input />
+      <input class="mb-2" (keyup)="changePayed()" #input [(ngModel)]="payed" [placeholder]="header?.completeModel?.placeholder" type="number" nz-input />
+      طريقة الدفع
+      <nz-form-control nzErrorTip="field is required!">
+        <nz-select
+          [(ngModel)]="payType"
+          >
+          <nz-option nzValue="0" nzLabel="كاش"></nz-option>
+          <nz-option nzValue="1" nzLabel="بنكك"></nz-option>
+        </nz-select>  
+      </nz-form-control>
+    </ng-container>
+  </nz-modal>
+</div>
+
+<!--deliverd items model-->
+<div *ngIf="header?.deliverdModel" >
+  <nz-modal
+    [nzStyle]="{width: '30%'}"
+    [(nzVisible)]="isVisibleCompleteModal"
+    nzTitle="تسليم كمية"
+    (nzOnCancel)="handleCancelCompleteModal()"
+    (nzOnOk)="onOkDelivered()"
+  >
+    <ng-container *nzModalContent>
+      الكمية المستملة هي
+      <input class="mb-2" (keyup)="changeDeliveredQty()" #input [(ngModel)]="deliveredItemObject.delivered_qty" placeholder="ادخل الكمية المستلمة" type="number" nz-input />
+      اسم المستلم
+      <nz-form-control class="mb-2" nzErrorTip="field is required!">
+        <input #input [hidden]="header.hidden" 
+        [placeholder]="value == undefined?0:''" type="text" nz-input [(ngModel)]="deliveredItemObject.recipient_name" />
+      </nz-form-control>
+      ملاحظات
+      <nz-form-control nzErrorTip="field is required!">
+        <input #input [hidden]="header.hidden" 
+        [placeholder]="value == undefined?0:''" type="text" nz-input [(ngModel)]="deliveredItemObject.remark" />
+      </nz-form-control>
     </ng-container>
   </nz-modal>
 </div>

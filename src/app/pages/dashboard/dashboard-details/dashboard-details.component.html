@@ -1,0 +1,9 @@
+<div class="row">
+    <app-back-btn class="mb-2" />
+    <nz-divider nzType="vertical" />
+    <h1 class="fb">
+        {{pageTitle}}
+    </h1>
+</div>
+<app-report-table-data *ngIf="!isWallet()" [inputTableData]="tableData" [tableName]="pageKey" [pageTitle]="pageTitle" />
+<app-table-data *ngIf="isWallet()" [inputTableData]="tableData" />

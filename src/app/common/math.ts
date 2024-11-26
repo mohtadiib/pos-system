@@ -5,7 +5,7 @@ export const numberFormat = function (number:number) {
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
 export const priceFormat = function (number:number) {
-  return number ? ` ${numberFormat(number)} جنيه ` : ``;
+  return number ? ` ${numberFormat(number)} جنيه ` : `00.0`;
 }
 
 export const convertArabicToEng = function (num:string) {
@@ -40,6 +40,21 @@ export const getCurrentDate = function (){
   let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   let yyyy = today.getFullYear();
   return dd + '/' + mm + '/' + yyyy;
+}
+
+export const getCurrentDateTime = function (){
+  const currentDateTime = new Date();
+const formattedDateTime = currentDateTime.toLocaleString('en-US', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: true
+});
+return formattedDateTime
 }
 
 

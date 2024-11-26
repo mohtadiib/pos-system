@@ -1,61 +1,53 @@
 <nz-form-item>
   <nz-form-control [nzErrorTip]="this.header?.validators?.error">
 
-    <div style="background-color: #fffff0;cursor: pointer" *ngIf="header?.type == 'image_view' && !tableDataService.selectedImage?.image" (click)="showModal()" nz-button nzType="default">
+    <div style="background-color: #fffff0;cursor: pointer"
+      *ngIf="header?.type == 'image_view' && !tableDataService.selectedImage?.image" 
+      (click)="showModal()" nz-button
+      nzType="default">
       <span nz-icon nzType="edit"></span>
       حدد صورة
     </div>
-    
+
     <div (click)="showModal()" class="small-image-container"
-         *ngIf="header?.type == 'image_view' && tableDataService.selectedImage?.image">
+      *ngIf="header?.type == 'image_view' && tableDataService.selectedImage?.image">
       <span nz-icon nzType="edit"></span>
       <img class="small-image" src="{{imageUrl+tableDataService.selectedImage.image}}" alt="image">
     </div>
-    <input #input [hidden]="header.hidden" *ngIf="header?.type == '' || header?.type == 'list' || header?.type == 'get_online_list' "
-           [placeholder]="value == undefined?0:''"
-           type="text" nz-input
-           [formControlName] = "keyItem"
-           (keyup)="inputChange($event)"
-    />
-    <div class="pl-8" *ngIf="header?.hidden">{{form.get(keyItem)?.value}}</div>
     
-    <nz-select
-      (nzOpenChange)="setPrice($event)"
-        *ngIf="header?.type == 'tag' ||
+    <input #input [hidden]="header.hidden"
+      *ngIf="header?.type == '' || header?.type == 'list' || header?.type == 'get_online_list' "
+      [placeholder]="value == undefined?0:''" type="text" nz-input [formControlName]="keyItem"
+      (keyup)="inputChange($event)" />
+    <div class="pl-8" *ngIf="header?.hidden">{{getValue(form.get(keyItem)?.value)}}</div>
+
+    <nz-select (nzOpenChange)="setPrice($event)" *ngIf="header?.type == 'tag' ||
          header?.type == 'fill_tag' ||
          header?.type == 'online_list' ||
          header?.type == 'tags_list_choices' ||
-         header?.type == 'tags_list'"
-      [formControlName] = "keyItem"
-    >
+         header?.type == 'tags_list'" [formControlName]="keyItem">
       <!--                       nzValue="{{this.header?.type == 'online_list'?item.doc_id:item.value}}"-->
       <nz-option *ngFor="let item of getChoicesList()"
-                 nzValue="{{this.header?.type == 'online_list'?item.doc_id:item.value}}"
-                 nzLabel="{{item.name}}"
-      ></nz-option>
+        nzValue="{{this.header?.type == 'online_list'?item.doc_id:item.value}}" nzLabel="{{item.name}}"></nz-option>
     </nz-select>
-    
-    
-    <nz-input-number *ngIf="header?.type == 'number'" [formControlName] = "keyItem" [nzMin]="1" [nzMax]="10" ></nz-input-number>
-    
-    <nz-input-number-group (keyup)="inputChange($event)" *ngIf="header?.type == 'number-with'" [nzAddOnAfter]="header?.after">
-      <nz-input-number class="w-50" [formControlName] = "keyItem" [nzStep]="1" [nzMin]="1" ></nz-input-number>
+
+
+    <nz-input-number *ngIf="header?.type == 'number'" [formControlName]="keyItem" [nzMin]="1"
+      [nzMax]="10"></nz-input-number>
+
+    <nz-input-number-group (keyup)="inputChange($event)" *ngIf="header?.type == 'number-with'"
+      [nzAddOnAfter]="header?.after">
+      <nz-input-number class="w-50" [formControlName]="keyItem" [nzStep]="1" [nzMin]="1"></nz-input-number>
     </nz-input-number-group>
-  
-    <nz-switch *ngIf="header?.type == 'switch'" nzDisabled ></nz-switch>
-    
+
+    <nz-switch *ngIf="header?.type == 'switch'" nzDisabled></nz-switch>
+
   </nz-form-control>
 </nz-form-item>
 
-<nz-modal
-  *ngIf="header?.type == 'image_view'"
-  [nzStyle]="{width: '80%'}"
-  [(nzVisible)]="tableDataService.isVisibleModel"
-  nzTitle="اختر صورة"
-  [nzFooter]="null"
-  (nzOnCancel)="handleCancel()"
-  (nzAfterClose)="afterModalClose()"
->
+<nz-modal *ngIf="header?.type == 'image_view'" [nzStyle]="{width: '80%'}"
+  [(nzVisible)]="tableDataService.isVisibleModel" nzTitle="اختر صورة" [nzFooter]="null" (nzOnCancel)="handleCancel()"
+  (nzAfterClose)="afterModalClose()">
   <ng-container *nzModalContent>
     <app-images-grid />
   </ng-container>

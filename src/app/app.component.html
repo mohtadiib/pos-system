@@ -32,11 +32,11 @@
             <span style="font-size: 12px;font-weight: bold"
                   class="trigger user-header">
               {{authService.sessionUser.name}} /
-              {{authService.sessionUser.departmentName}}
+              {{authService.getDepartmentName()}}
             </span>
           </span>
           </div>
-        <ul *ngIf="isStockRoute()" nz-menu nzMode="horizontal">
+        <ul *ngIf="isSettingRoute()" nz-menu nzMode="horizontal">
           <li nz-menu-item [nzSelected]="i == 0" *ngFor="let item of authService.settingsList; let i = index" >
             <span nz-icon nzType="{{item.icon}}"></span>
             {{item.title}}

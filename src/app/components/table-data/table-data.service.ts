@@ -17,11 +17,12 @@ export class TableDataService {
     //   body.where = "";
     // }
     body.sessionId = this.authService.getToken()
-    // console.log(JSON.stringify(body))
+    console.log(JSON.stringify(body))
     return this.http.post<any[]>(GlobalVariable.BASE_API_URL+method,body);
   }
 
   getDataWithGet(customPath:string): Observable<any[]> {
+    // console.log(customPath)
     return this.http.get<any[]>(GlobalVariable.BASE_API_URL+customPath);
   }
 

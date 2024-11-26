@@ -30,9 +30,10 @@ import {NzSelectModule} from "ng-zorro-antd/select";
 import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
 import { SettingsComponent } from './pages/settings/settings.component';
 import { OutputsComponent } from './pages/outputs/outputs.component';
+import {NzInputNumberModule} from "ng-zorro-antd/input-number";
 
 registerLocaleData(ar);
-
+// mm
 @NgModule({
     declarations: [
         AppComponent,
@@ -65,6 +66,7 @@ registerLocaleData(ar);
         NgOptimizedImage,
         NzSelectModule,
         NzDatePickerModule,
+        NzInputNumberModule
     ],
     providers: [
         {provide: NZ_I18N, useValue: ar_EG},

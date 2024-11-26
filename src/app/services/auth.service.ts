@@ -21,6 +21,9 @@ export class AuthService {
     private router: Router
   ) {
     this.getSessionStatus()
+  //   if(!this.isUserHasRole()){
+  //     router.navigate(['/']);
+  // }
   }
   getAuthStatus(){
     return this.isLoggedIn()
@@ -66,33 +69,78 @@ export class AuthService {
     this.isAdmin = session.isAdmin!
     this.sessionUser = session
     this.sideBarList = []
+    this.outputsList = []
+    this.settingsList = []
     // console.log("session: ",session)
-    if (session.isAdmin){
-      console.log("is Admin side push")
-      this.sideBarList =  new DataSources().pagesDataTable
-      this.settingsList =  new DataSources().settingsList.filter(item=> !item?.hidAsBarButton)
-      this.outputsList =  new DataSources().outputsList.filter(item=> !item?.hidAsBarButton)
-    }else {
-      new DataSources().pagesDataTable.forEach(value => {
-        let perList: number[] = value.permissionsUserRole ?? [];
+    // if (session.isAdmin){
+    //   console.log("is Admin side push")
+    //   this.sideBarList =  new DataSources().pagesDataTable
+    //   this.settingsList =  new DataSources().settingsList.filter(item=> !item?.hidAsBarButton)
+    //   this.outputsList =  new DataSources().outputsList.filter(item=> !item?.hidAsBarButton)
+    // }else {
+    //   new DataSources().pagesDataTable.forEach(value => {
+    //     let perList: number[] = value.permissionsUserRole ?? [];
+    //     if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
+    //       this.sideBarList.push(value)
+    //       }
+    //   })
+    //   new DataSources().settingsList.forEach(value => {
+    //     let perList: number[] = value.permissions ?? [];
+    //       if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
+    //         this.settingsList.push(value)
+    //       }
+    //   })
+    //   new DataSources().outputsList.forEach(value => {
+    //     let perList: number[] = value.permissions ?? [];
+    //       if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
+    //         this.outputsList.push(value)
+    //       }
+    //   })
+    // }
+    new DataSources().pagesDataTable.forEach(value => {
+      let perList: number[] = value.permissionsUserRole ?? [];
+      if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
+        this.sideBarList.push(value)
+        }
+    })
+    new DataSources().settingsList.forEach(value => {
+      let perList: number[] = value.permissions ?? [];
         if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
-          this.sideBarList.push(value)
-          }
-      })
-      new DataSources().settingsList.forEach(value => {
-        let perList: number[] = value.permissions ?? [];
-          if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
-            this.settingsList.push(value)
-          }
-      })
-      new DataSources().outputsList.forEach(value => {
-        let perList: number[] = value.permissions ?? [];
-          if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
-            this.outputsList.push(value)
-          }
-      })
+          this.settingsList.push(value)
+        }
+    })
+    new DataSources().outputsList.forEach(value => {
+      let perList: number[] = value.permissions ?? [];
+        if (perList.includes(+session.permissionType!) || !perList.length && !value?.hidAsBarButton){
+          this.outputsList.push(value)
+        }
+    })
+  }
+
+
+  isUserHasRole(requestedRoute:string){
+    // let page = this.sideBarList.find(value=>value.router == requestedRoute)
+    // // let page = new DataSources().pagesDataTable.find(value=>value.router == requestedRoute)
+    // let permissionsRoles: number[] = page?.permissionsUserRole || []
+    // let userRole:number = +this.sessionUser.permissionType! || 0
+    // // return page?true:false
+    // // return permissionsRoles.includes(userRole) || !permissionsRoles.length
+    // return tr
+  }
+
+  getDepartmentName(){
+    let deparment = "المدير"
+
+    if(this.isSales()){
+      deparment = "المبيعات"
+    }else if(this.isStock()){
+      deparment = "المخزن"
     }
+    
+    return deparment
   }
 
   isManager = () => this.sessionUser.isAdmin
+  isStock = () => this.sessionUser.permissionType == "4"
+  isSales = () => this.sessionUser.permissionType == "0"
 }

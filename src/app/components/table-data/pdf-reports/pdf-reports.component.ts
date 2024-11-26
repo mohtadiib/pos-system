@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import fonts from '../../../common/fonts.json';
+import { getCurrentDateTime } from 'src/app/common/math';
 
 @Component({
   selector: 'app-pdf-reports',
@@ -21,7 +22,6 @@ export class PdfReportsComponent {
   generatePDF() {
     // إنشاء رؤوس الجدول
     this.headers = this.listOfKeys.map((element) => element.name);
-    console.log('Headers:', this.headers);
 
     // تجهيز بيانات الجدول من خلال مطابقة المفاتيح وإضافتها كصفوف
     this.saleItems = this.listOfData.map((item) => {
@@ -52,10 +52,13 @@ export class PdfReportsComponent {
       theme: 'grid',
       styles: { halign: 'center', font: 'Amiri' },
       headStyles: { fillColor: [243, 156, 18] },
-      margin: { left: 40, right: 40 },
+      margin: { left: 10, right: 10 },
+      columnStyles: {
+        1: { cellWidth: 120 }, // العرض للعمود الثاني
+      },    
     });
 
     // حفظ ملف PDF
-    doc.save('invoice.pdf');
+    doc.save(`${this.title}-invoice-${getCurrentDateTime()}.pdf`);
   }
 }

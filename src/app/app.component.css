@@ -54,7 +54,6 @@
   color: #fff;
   font-weight: 600;
   font-size: 14px;
-  font-family: Avenir,Helvetica Neue,Arial,Helvetica,sans-serif;
   vertical-align: middle;
 }
 
@@ -92,5 +91,32 @@ nz-header {
   background-color: transparent;
   margin-right: 20px;
   margin-bottom: 12px;
+}
+
+
+
+@media print {
+  /* All print related styles to be added here */
+  .ant-layout-sider , .app-header {
+    display: none !important;
+  }
+  .inner-content[_ngcontent-dmt-c24]{
+    padding: 0 !important;
+  }
+  .paper {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  nz-header {
+    display: none !important;
+  }
+  .inner-content {
+    padding: 0 !important;
+  }
+  .inner-content {
+    padding: 0 !important;
+    height: fit-content;
+  }
 }
 

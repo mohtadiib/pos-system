@@ -71,4 +71,13 @@ h1{
   .ant-layout-sider{
     display: none;
   }
+  .ant-btn{
+    display: none
+  }
+  .ant-tabs > .ant-tabs-nav, .ant-tabs > div > .ant-tabs-nav{
+    display: none
+  }
+  .invoice-title{
+    display: none
+  }
 }

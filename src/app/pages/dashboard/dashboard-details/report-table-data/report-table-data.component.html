@@ -1,0 +1,37 @@
+<div class="mb-2 row">
+  <div *ngIf="tableData.searchable" class="mr-20">
+    <nz-input-group [nzSuffix]="suffixIconSearch">
+      <input (keyup)="searchItem()" [(ngModel)]="searchValue" type="text" nz-input
+        placeholder={{tableData.searchable?.placeholder}} />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <span nz-icon nzType="search"></span>
+    </ng-template>
+  </div>
+  <app-pdf-reports [listOfKeys]="tableData.headers!" [listOfData]="listOfData" [keysEditModel]="keysEditModel" [title]="pageTitle"/>
+</div>
+<nz-table nzLoading="{{tableLoading}}" #editRowTable nzBordered [nzData]="listOfData" [nzShowPagination]="false"
+  [nzPageSize]="10" [nzScroll]="{ y: '55vh' }">
+  <thead>
+    <tr>
+      <th [nzWidth]="item?.width?item?.width:''" *ngFor="let item of tableData.headers">
+        {{item.name}}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of listOfData">
+      <ng-container>
+        <td
+          *ngFor="let keyItem of keysEditModel; let i = index">
+          <app-data-show-type [header]="tableData.headers![i]" [value]="data[keyItem]" [record]="data"
+            (messageEvent)="receiveMessage($event)" />
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+</nz-table>
+<br />
+<!-- Pagination -->
+<nz-pagination (nzPageIndexChange)="changePaginationIndex($event)" [nzPageSize]="pagination.perPage"
+  [nzPageIndex]="pagination.paginationIndex" [nzTotal]="pagination.rowsCount"></nz-pagination>

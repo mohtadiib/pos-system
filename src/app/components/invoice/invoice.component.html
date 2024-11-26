@@ -1,13 +1,23 @@
-<div *ngIf="!isInvoice()">
-  <app-download-btn [invoiceData]="sale" />
-  <!-- <button nz-button nzType="primary" (click)="generatePDF()">تحميل الفاتورة  PDF</button> -->
-  <button nz-button (click)="goToFullScreen()">عرض في شاشة كاملة</button>
+<div class="row">
+  <div>
+    <div class="row">
+      <app-back-btn *ngIf="isInvoice()" />
+      <app-download-btn [invoiceData]="sale" />
+      <!-- <button nz-button nzType="primary" (click)="generatePDF()">تحميل الفاتورة  PDF</button> -->
+      <button *ngIf="!isInvoice()" class="mr-4" nz-button (click)="goToFullScreen()">عرض في شاشة كاملة</button>
+    </div>
+    <br>
+    <button (click)="print()" nz-button nzType="default">
+      طباعة
+     <span nz-icon nzType="printer"></span>
+   </button>
 </div>
-<app-back-btn *ngIf="isInvoice()" />
-<div class="paper-container">
-    <div class="paper">
+    <div class="paper-container" >
+      <div class="paper">
         <app-header />
-        <app-info [sale]="sale" />
+        <div class="mt-5"></div>
+        <app-info [sale]="sale"/>
+        <div class="mt-5"></div>
         <app-items-table [saleItems]="sale?.saleItems" />
         <table>
           <thead>
@@ -35,10 +45,6 @@
        التوقيع: 
       </h4>
       <nz-divider  nzType="vertical"></nz-divider>
-      <button (click)="print()" nz-button nzType="default">
-         طباعة
-        <span nz-icon nzType="printer"></span>
-      </button>
       <div class="footer-paper">
         <div style="display: flex; text-align: center;" class="fs-10">
           <img class="footer-logo" src="assets/img/developer-logo/logo_black.png" alt="">
@@ -46,6 +52,5 @@
         </div>
       </div>
     </div>
-  </div>
-  <br>
-  <br>
+    </div>
+</div>

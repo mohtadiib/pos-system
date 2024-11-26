@@ -42,31 +42,26 @@ export class TableDataComponent implements OnInit, OnChanges{
     public authService:AuthService) {
   }
 
-  //Table Search Field **************************************************************************
-  // inputSearchChange(){
-  //   this.searchItem()
-  // }
-  // filteredListOfData() {
-  //   let list = this.listOfData
-  //   const rg = this.searchValue ? new RegExp(this.searchValue, "gi") : null;
-  //   let key = "name"
-  //   if (this.tableData?.searchable?.keyFilter){
-  //      key = this.tableData?.searchable?.keyFilter
-  //   }
-  //   // console.log(key)
-  //   list = list.filter((p) => !rg  || p?.doc_id?.match(rg)  || p?.name?.match(rg) || p[key]["name"]?.match(rg));
-
-  //   return list
-  // }
-
   //DB Seach
   searchItem(limitRange:any = {}) {
     if(this.searchValue){
       let table = this.tableData.table || this.tableData.customApiBody?.table
+
+      const foreignKey = this.tableData?.customApiBody.foreignField
+      let key = ''
+      let value: any = ''
+
+      if(foreignKey){
+         key = Object.keys(foreignKey)[0]
+         value = Object.values(foreignKey)[0]  
+      }
+
+      const where = ` ${key} = ${value} `  
       let body = {
         table: table,
         field: "name",
         value: this.searchValue,
+        where: where || "",
         limitRange: { start: 1, limitTo: 10 },
       }
       if(limitRange.start){
@@ -88,10 +83,13 @@ export class TableDataComponent implements OnInit, OnChanges{
     }
   }
   // modelData = () => this.tableData2[this.index];
-  receiveMessage($event:any){
-    this.storeData($event,()=> {
+  receiveMessage(event:any){
+    let table = event.table
+    let data = event.data
+    let adding = event.adding
+    this.storeData(data,()=> {
       // this.editCache[doc_id].edit = false;
-    })
+    },table,adding)
   }
   //set general price from size field to price field
   receiveSize($event:any){
@@ -163,8 +161,9 @@ export class TableDataComponent implements OnInit, OnChanges{
       // apiBody.innerTable = innerTableName
       body = apiBody
     }else if(this.tableData.customApiBody){
-      console.log("foreignId 2: ",this.foreignId)
-      body = input?this.tableData.customApiBody.table:this.tableData.customApiBody
+      // console.log("foreignId 2: ",this.foreignId)
+      body = this.tableData.customApiBody
+      // body = input?this.tableData.customApiBody.table:this.tableData.customApiBody
     }
     return body
   }
@@ -195,7 +194,7 @@ export class TableDataComponent implements OnInit, OnChanges{
     this.editingObject.adding = false;
   }
   handleCancel(): void {
-    console.log('Button cancel clicked!');
+    // console.log('Button cancel clicked!');
     this.isVisible = false;
     this.editingObject.adding = false;
   }
@@ -253,12 +252,19 @@ export class TableDataComponent implements OnInit, OnChanges{
       this.tableApiService.createMessage('error',"قم بملء جميع الحقول")
     }
   }
-  storeData(data:any,call:any){
+  storeData(data:any,call:any,table:any = "",adding:boolean = false){
     let body = this.checkCustomApi(true)
+    if(table){
+      body = table
+    }
+    let isAdding = this.editingObject.adding
+    if(adding){
+      isAdding = adding
+    }
     data.innerItem2 = this.tableData?.customApiBody?.innerItem2!
     this.tableApiService.saveData(
       body!,
-      this.editingObject.adding,
+      isAdding,
       data
     ).subscribe((res:any)=> {
       // console.log(res)
@@ -273,7 +279,7 @@ export class TableDataComponent implements OnInit, OnChanges{
         if (res.msg == "Session Error"){
           this.tableApiService.createMessage('error',"خطا في الجلسة، قم باعادة تسجيل الدخول")
         }else {
-          this.tableApiService.createMessage('error',res?.content || res?.message)
+          this.tableApiService.createMessage('error',res?.content || res?.message || res.msg)
         }
       }
       //close focusing input

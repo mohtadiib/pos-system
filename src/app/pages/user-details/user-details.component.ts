@@ -17,8 +17,9 @@ export class UserDetailsComponent {
   userId: string = ''
   id: string = ''
   name: string = ''
-  loading: boolean = false
-  user: any = {}
+  type: string = ''
+  // loading: boolean = false
+  // user: any = {}
   // categoriesList: TableData[] = new DataSources().categoriesList
   tableData: TableData[] = []
   isVisible: boolean = false
@@ -32,20 +33,10 @@ export class UserDetailsComponent {
     ) {
       this.id = this.activatedRoute.snapshot.paramMap.get('id')!
       this.name = this.activatedRoute.snapshot.paramMap.get('name')!
+      this.type = this.activatedRoute.snapshot.paramMap.get('type')!
   }
   ngOnInit(): void {
     this.setTablesData()
-    this.getUser()
-  }
-  getUser(){
-    console.log(this.userId)
-    this.loading = true
-    let body = { table:"users", where: " doc_id = "+this.userId }
-    this.tableDataService.getData(body).subscribe(res => {
-      // console.log(res)
-      this.loading = false
-      this.user = res[0]
-    })
   }
 
 
@@ -53,13 +44,14 @@ export class UserDetailsComponent {
     this.tableData = [
       {
         router: { main: '/debts' },
+        customCrud: ['return','add'],
         customApiBody: {
           table: 'debts',
-          foreignFields: [
-            { field: 'user_id', table: 'users' },
-            { field: 'client_id', table: 'users' },
-          ],
-          foreignField: {client_id: this.id },
+          // foreignFields: [
+          //   { field: 'user_id', table: 'users' },
+          //   { field: 'client_id', table: 'users' },
+          // ],
+          foreignField: { client_id: this.id },
           limitRange: { start: 1, limitTo: 5 },
         },
         headers: [
@@ -89,17 +81,17 @@ export class UserDetailsComponent {
           },
           { name: 'المدفوع', type: '', disabled: true },
           { name: 'رقم العملية', type: '', disabled: true },
-          {
-            name: 'الموظف',
-            type: 'online_list',
-            innerTableName: 'users',
-            disabled: true,
-          },
-          {
-            name: 'العميل / المورد',
-            type: 'online_list',
-            innerTableName: 'users',
-          },
+          // {
+          //   name: 'الموظف',
+          //   type: 'online_list',
+          //   innerTableName: 'users',
+          //   disabled: true,
+          // },
+          // {
+          //   name: 'العميل / المورد',
+          //   type: 'online_list',
+          //   innerTableName: 'users',
+          // },
           {
             name: 'الحالة',
             type: 'tags_list',
@@ -119,8 +111,8 @@ export class UserDetailsComponent {
           money_value: '',
           payed: '',
           sale_id: '',
-          user_id: '',
-          client_id: '',
+          // user_id: '',
+          // client_id: '',
           debt_status: '',
           created_at: Date.now(),
           updated_at: Date.now(),
@@ -140,7 +132,7 @@ export class UserDetailsComponent {
             tables: ['sales_items'],
             get_length: true,
           },
-          where: ` incoming = 0 and client_id = ${this.id} `,
+          where: ` incoming = 3 and client_id = ${this.id} `,
           withAdmin: true,
           limitRange: { start: 1, limitTo: 5 },
         },
@@ -148,7 +140,7 @@ export class UserDetailsComponent {
         headers: [
           { name: 'الرقم', type: '', hidden: true },
           { name: 'العميل', type: 'online_list' },
-          { name: 'الموظف', type: 'online_list' },
+          // { name: 'الموظف', type: 'online_list' },
           { name: 'الاجمالي', type: '' },
           { name: 'التخفيض', type: '' },
           {
@@ -161,7 +153,7 @@ export class UserDetailsComponent {
             ],
           },
           {
-            name: 'الحالة',
+            name: 'حالة الاستلام',
             type: 'tags_list',
             values: [
               { name: 'لم يتم', value: '0', color: '#737373' },
@@ -170,40 +162,12 @@ export class UserDetailsComponent {
             ],
           },
           { name: 'التاريخ', type: '', hidden: true },
-          {
-            name: 'الاصناف',
-            type: 'list',
-            innerModel: {
-              title: 'الاصناف',
-              router: { main: '/sales_items' },
-              customApiBody: {
-                table: 'sales_items',
-                foreignField: { sale_id: '' },
-                foreignFields: [{ field: 'product_id', table: 'products' }],
-                withAdmin: true,
-              },
-              customCrud: [],
-              headers: [
-                { name: 'الرقم', type: '', hidden: true },
-                {
-                  name: 'اسم المنتج',
-                  type: 'online_list',
-                  innerTableName: 'products',
-                },
-                { name: 'الكمية', type: '' },
-              ],
-              model: {
-                doc_id: '',
-                product_id: '',
-                quantity: '',
-              },
-            },
-          },
+          { name: "التفاصيل", type: "details", router:["/sale_details"], disabled: true}
         ],
         model: {
           doc_id: '',
           client_id: '',
-          user_id: '',
+          // user_id: '',
           total: '',
           discount: '',
           pay_type: '0',
@@ -225,4 +189,6 @@ export class UserDetailsComponent {
     this.patientTests = analysesData.listOfPatientSelectedTest
     this.totalCostOfAnalyses = analysesData.total
   }
+
+  getUserTitle = () => this.type == "customer"? "العميل":"المورد"
 }

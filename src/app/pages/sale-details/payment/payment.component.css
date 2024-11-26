@@ -1,6 +1,7 @@
-.delivered-container{
+.payment-container{
     margin-right: 3rem;
     background-color: white;
     border-radius: 20px;
     padding: 30px;
+    width: 50%;
 }

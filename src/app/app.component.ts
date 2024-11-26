@@ -10,7 +10,7 @@ import {AuthService} from "./services/auth.service";
 })
 export class AppComponent {
   constructor(private router: Router,public authService:AuthService,private activatedRoute:ActivatedRoute) {
-    console.log(this.router.url)
+    // console.log(this.router.url)
   }
   isCollapsed = false;
   title!: "Sales System";
@@ -34,8 +34,9 @@ export class AppComponent {
     }
   }
       // @ts-ignore
-  public isStockRoute = () =>  this.activatedRoute.snapshot.firstChild?.url == "settings"
+  public isSettingRoute = () =>  this.activatedRoute.snapshot.firstChild?.url == "settings"
         // @ts-ignore
   public isOutputsRoute = () =>  this.activatedRoute.snapshot.firstChild?.url == "expenses"
+
 
 }

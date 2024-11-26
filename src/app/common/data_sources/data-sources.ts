@@ -32,11 +32,11 @@ class DataSources {
           { name: 'الكمية', type: '', hidden: true },
           { name: 'الوحدة', type: 'online_list', innerTableName: 'units' },
           { name: 'عدد القطع x الوحدة', type: '',width: '10%' },
-          { name: 'الكمية بالقطعة', type: '',width: '10%' },
-          { name: 'التكلفة', type: '' },
-          { name: 'السعر', type: '' },
-          { name: 'اقل كمية', type: '' },
-          { name: 'الصورة', type: 'image_view' },
+          { name: 'الكمية بالقطعة', type: '',width: '10%',  hidden: true },
+          { name: 'تكلفة الوحدة', type: '' },
+          { name: 'سعر القطعة', type: '' },
+          { name: 'اقل كمية', type: '', notShowingInReport: true  },
+          { name: 'الصورة', type: 'image_view', notShowingInReport: true },
           {
             name: 'الحالة',
             type: 'tag',
@@ -44,6 +44,7 @@ class DataSources {
               { name: 'معلق', value: '0' },
               { name: 'نشط', value: '1' },
             ],
+            notShowingInReport: true 
           },
         ],
         model: {
@@ -51,7 +52,7 @@ class DataSources {
           name: '',
           quantity_per_unit: '',
           unit_id: '',
-          unit_item_qty: '',
+          unit_item_qty: '1',
           quantity: '',
           cost: '',
           price: '',
@@ -178,26 +179,26 @@ class DataSources {
         },
       },
     },
-    {
-      title: "الاعدادات",
-      icon:"block",
-      router: "configration",
-      path:"configration",
-      permissions: [0,2],
-      tableData: {
-        customCrud: [],
-        router: { main:"configration"},
-        table:"app_config",
-        headers: [
-          { name: "الرقم", type: "", hidden: true },
-          { name: "ربط المخزن", type: "switch" }
-        ],
-        model:{
-          doc_id: '',
-          link_stock: '',
-        }
-      },
-    },
+    // {
+    //   title: "اعداد النظام",
+    //   icon:"block",
+    //   router: "configration",
+    //   path:"configration",
+    //   permissions: [0,2],
+    //   tableData: {
+    //     customCrud: [],
+    //     router: { main:"configration"},
+    //     table:"app_config",
+    //     headers: [
+    //       { name: "الرقم", type: "", hidden: true },
+    //       { name: "ربط المخزن", type: "switch" }
+    //     ],
+    //     model:{
+    //       doc_id: '',
+    //       link_stock: '',
+    //     }
+    //   },
+    // },
   ];
 
   outputsList: any[] = [
@@ -207,7 +208,7 @@ class DataSources {
       path: 'outputs',
       icon: 'switcher',
       tableData: {
-        modelAddType: true,
+        // modelAddType: true,
         router: { main: '/outputs' },
         table: 'outputs',
         customCrud: ['add', 'return', 'edit'],
@@ -305,14 +306,16 @@ class DataSources {
       icon: 'block',
       router: '/customers',
       path: 'customers',
+      permissionsUserRole: [1,0],
       tableData: {
         searchable: { keyFilter: 'name', placeholder: "اكتب اسم العميل" },
         router: { main: '/customers' },
         customApiBody: {
+          foreignField: { role: 3 },
           table: 'users',
           // foreignFields: [{ field: 'department_id', table: 'departments' }],
           limitRange: { start: 1, limitTo: 10 },
-          where: "role = 3"
+          // where: "role = 3"
         },
         headers: [
           { name: 'الرقم', type: '', hidden: true },
@@ -327,7 +330,50 @@ class DataSources {
               { name: 'نشط', value: '1' },
             ],
           },
-          { name: "التفاصيل", type: "details", router:["/user_details"], setName: true, disabled: true}
+          { name: "التفاصيل", type: "details", router:["/user_details"], setName: true, setTitle: "customer" , disabled: true}
+        ],
+        model: {
+          doc_id: '',
+          name: '',
+          phone: '',
+          // username: '',
+          // password: '',
+          // role: '',
+          active: '1',
+          user_details: undefined,
+        },
+      },
+    },
+    {
+      title: 'الموردين',
+      icon: 'block',
+      router: '/suppliers',
+      path: 'suppliers',
+      permissionsUserRole: [1,4],
+      tableData: {
+        searchable: { keyFilter: 'name', placeholder: "اكتب اسم المورد" },
+        router: { main: '/suppliers' },
+        customApiBody: {
+          table: 'users',
+          foreignField: { role: 2 },
+          // foreignFields: [{ field: 'department_id', table: 'departments' }],
+          limitRange: { start: 1, limitTo: 10 },
+          // where: "role = 2"
+        },
+        headers: [
+          { name: 'الرقم', type: '', hidden: true },
+          { name: 'الإسم', type: '' },
+          { name: 'رقم الهاتف', type: '' },
+          // { name: 'كلمة المرور', type: '' },
+          {
+            name: 'الحالة',
+            type: 'tag',
+            values: [
+              { name: 'معلق', value: '0' },
+              { name: 'نشط', value: '1' },
+            ],
+          },
+          { name: "التفاصيل", type: "details", router:["/user_details"], setName: true, setTitle: "supplier" , disabled: true}
         ],
         model: {
           doc_id: '',
@@ -346,6 +392,7 @@ class DataSources {
       router: '/pos',
       path: 'pos',
       icon: 'up-circle',
+      permissionsUserRole: [0],
       component: PosComponent,
     },
     {
@@ -353,6 +400,7 @@ class DataSources {
       router: '/sales',
       path: 'sales',
       icon: 'shopping-cart',
+      permissionsUserRole: [1,0],
       tableData: {
         router: { main: '/sales' },
         customApiBody: {
@@ -366,7 +414,7 @@ class DataSources {
             tables: ['sales_items'],
             get_length: true,
           },
-          where: ' incoming = 0 ',
+          where: ' incoming = 3 ',
           withAdmin: true,
           limitRange: { start: 1, limitTo: 10 },
         },
@@ -384,6 +432,7 @@ class DataSources {
               { name: 'كاش', value: '0', color: '#71b649' },
               { name: 'بنكك', value: '1', color: '#deae47' },
               { name: 'دين', value: '2', color: '#888888' },
+              { name: 'محفظة العميل', value: '3', color: '#888888' },
             ],
           },
           {
@@ -418,7 +467,7 @@ class DataSources {
       icon: 'switcher',
       component: OutputsComponent,
       children: this.outputsList,
-      permissionsUserRole: [1],
+      permissionsUserRole: [1,0],
     },
     {
       title: 'الوارد',
@@ -426,7 +475,7 @@ class DataSources {
       router: '/incoming',
       path: 'incoming',
       component: PosComponent,
-      permissionsUserRole: [1],
+      permissionsUserRole: [4,0],
     },
     {
       title: 'ادارة الوارد',
@@ -446,7 +495,7 @@ class DataSources {
             tables: ['sales_items'],
             get_length: true,
           },
-          where: ' incoming = 1 ',
+          where: ' incoming = 1 or incoming = 2 ',
           limitRange: { start: 1, limitTo: 10 },
         },
         customCrud: ['return'],
@@ -517,89 +566,94 @@ class DataSources {
           sales_items: undefined,
         },
       },
-      permissionsUserRole: [1],
+      permissionsUserRole: [1,4,0],
     },
-    {
-      title: 'الديون',
-      router: '/debts',
-      path: 'debts',
-      icon: 'switcher',
-      tableData: {
-        router: { main: '/debts' },
-        customApiBody: {
-          table: 'debts',
-          foreignFields: [
-            { field: 'user_id', table: 'users' },
-            { field: 'client_id', table: 'users' },
-          ],
-          limitRange: { start: 1, limitTo: 10 },
-        },
-        headers: [
-          { name: 'الرقم', type: '', hidden: true },
-          {
-            name: 'دائن / مدين',
-            type: 'icons_list',
-            values: [
-              { name: 'مدين', value: '0', color: '#ff0000', icon: 'arrow-up' },
-              {
-                name: 'دائن',
-                value: '1',
-                color: '#27a100',
-                icon: 'arrow-down',
-              },
-            ],
-            disabled: true,
-          },
-          {
-            name: 'المبلغ',
-            type: '',
-            completeModel: {
-              title: 'دفع الدين',
-              placeholder: 'ادخل المبلغ المدفوع',
-              keyOfLinkedField: 'payed',
-            },
-          },
-          { name: 'المدفوع', type: '', disabled: true },
-          { name: 'رقم العملية', type: '', disabled: true },
-          {
-            name: 'الموظف',
-            type: 'online_list',
-            innerTableName: 'users',
-            disabled: true,
-          },
-          {
-            name: 'العميل / المورد',
-            type: 'online_list',
-            innerTableName: 'users',
-          },
-          {
-            name: 'الحالة',
-            type: 'tags_list',
-            values: [
-              { name: 'غير مسدد', value: '0', color: '#a9a9a9' },
-              { name: 'مسدد', value: '1', color: '#27a100' },
-              { name: 'ملغي', value: '2', color: '#ff0000' },
-            ],
-          },
-          { name: 'الانشاء', type: '', disabled: true },
-          { name: 'التعديل', type: '', disabled: true },
-        ],
-        searchable: { keyFilter: 'client_id' },
-        model: {
-          doc_id: '',
-          income: '0',
-          money_value: '',
-          payed: '',
-          sale_id: '',
-          user_id: '',
-          client_id: '',
-          debt_status: '',
-          created_at: Date.now(),
-          updated_at: Date.now(),
-        },
-      },
-      permissionsUserRole: [1],
-    },
+    // {
+    //   title: 'الديون',
+    //   router: '/debts',
+    //   path: 'debts',
+    //   icon: 'switcher',
+    //   tableData: {
+    //     // customCrud: ['return','add'],
+    //     customCrud: ['add','return'],
+    //     router: { main: '/debts' },
+    //     customApiBody: {
+    //       table: 'debts',
+    //       foreignFields: [
+    //         // { field: 'user_id', table: 'users' },
+    //         { field: 'client_id', table: 'users' },
+    //       ],
+    //       limitRange: { start: 1, limitTo: 10 },
+    //     },
+    //     headers: [
+    //       { name: 'الرقم', type: '', hidden: true },
+    //       {
+    //         name: 'دائن / مدين',
+    //         type: 'icons_list',
+    //         values: [
+    //           { name: 'مدين', value: '0', color: '#ff0000', icon: 'arrow-up' },
+    //           {
+    //             name: 'دائن',
+    //             value: '1',
+    //             color: '#27a100',
+    //             icon: 'arrow-down',
+    //           },
+    //         ],
+    //         disabled: true,
+    //       },
+    //       {
+    //         name: 'المبلغ',
+    //         type: '',
+    //         completeModel: {
+    //           title: 'دفع الدين',
+    //           placeholder: 'ادخل المبلغ المدفوع',
+    //           keyOfLinkedField: 'payed',
+    //         },
+    //       },
+    //       { name: 'المدفوع', type: '', disabled: true },
+    //       // { name: 'رقم العملية', type: '', disabled: true },
+    //       // {
+    //       //   name: 'الموظف',
+    //       //   type: 'online_list',
+    //       //   innerTableName: 'users',
+    //       //   disabled: true,
+    //       // },
+    //       {
+    //         name: 'الطرف الثاني',
+    //         type: 'online_list',
+    //         innerTableName: 'users',
+    //       },
+    //       {
+    //         name: 'الحالة',
+    //         type: 'tags_list',
+    //         values: [
+    //           { name: 'غير مسدد', value: '0', color: '#a9a9a9' },
+    //           { name: 'مسدد', value: '1', color: '#27a100' },
+    //           { name: 'ملغي', value: '2', color: '#ff0000' },
+    //         ],
+    //       },
+    //       { name: 'الانشاء', type: '', disabled: true },
+    //       { name: "العمليات المالية", type: "details", router:["/operation_transactions"], setTitle: "سجل دين", disabled: true}
+    //       // { name: 'التعديل', type: '', disabled: true },
+    //     ],
+    //     // searchable: { keyFilter: 'client_id' },
+    //     model: {
+    //       doc_id: '',
+    //       income: '0',
+    //       money_value: '',
+    //       payed: '',
+    //       // sale_id: '',
+    //       // user_id: '',
+    //       client_id: '',
+    //       status: '',
+    //       created_at: Date.now(),
+    //       //not nesseccery same name
+    //       debit_details: undefined,
+    //       // updated_at: Date.now(),
+    //     },
+    //   },
+    //   permissionsUserRole: [1,0],
+    // },
     {
       title: 'المحفظة',
       router: '/transactions',
@@ -613,7 +667,7 @@ class DataSources {
           // limit: 5
           limitRange: { start: 1, limitTo: 10 },
         },
-        customCrud: ['add'],
+        customCrud: ['add','return'],
         headers: [
           { name: 'الرقم', type: '', hidden: true },
           { name: 'المبلغ', type: '' },
@@ -643,6 +697,15 @@ class DataSources {
             ],
             disabled: true,
           },
+          {
+            name: 'الحالة',
+            type: 'tags_list',
+            values: [
+              { name: 'مسجل', value: '0', color: '#737373' },
+              { name: 'مسجل', value: '1', color: '#737373' },
+              { name: 'ملغي', value: '2', color: '#ff0000' },
+            ],
+          },
           { name: 'تاريخ الانشاء', type: '', hidden: true },
           // { name: "تاريخ التعديل", type: "", hidden: true },
         ],
@@ -651,11 +714,11 @@ class DataSources {
           amount: '',
           type: '',
           income: '',
-          created_at: '',
-          // updated_at: '',
+          status: '',
+          created_at: undefined,
         },
       },
-      permissionsUserRole: [1],
+      permissionsUserRole: [1,0],
     },
     {
       title: 'التقارير',
@@ -684,10 +747,10 @@ class DataSources {
           active: '1',
         },
       },
-      permissionsUserRole: [1],
+      permissionsUserRole: [1,4,0],
     },
     {
-      title: 'المخزن',
+      title: 'الاعدادات',
       router: '/settings/categories',
       path: 'settings',
       icon: 'setting',
@@ -708,12 +771,17 @@ class DataSources {
     },
     headers: [
       {
-        name: 'اسم العامل',
-        type: 'online_list',
-        innerTableName: 'users',
-        where:"",
-        validators: { error: "Required", values: [Validators.required] }
+        name: 'اسم المستلم',
+        type: '',
+        validators: { error: "اسم المستلم ضروري", values: [Validators.required] }
       },
+      // {
+      //   name: 'اسم العامل',
+      //   type: 'online_list',
+      //   innerTableName: 'users',
+      //   where:"",
+      //   validators: { error: "Required", values: [Validators.required] }
+      // },
       { name: "ملاحظات", type: "" },
     ],
     model:{

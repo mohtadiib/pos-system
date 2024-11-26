@@ -8,14 +8,18 @@ import { UserDetailsComponent } from './pages/user-details/user-details.componen
 import { SaleDetailsComponent } from './pages/sale-details/sale-details.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { InvoiceComponent } from './components/invoice/invoice.component';
+import { DashboardDetailsComponent } from './pages/dashboard/dashboard-details/dashboard-details.component';
+import { OperationTransactionsComponent } from './pages/operation-transactions/operation-transactions.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: `${new DataSources().pagesDataTable[0].router}` /*'/courses/0'*/ },
   { path: 'login', component: AuthComponent },
-  { path: 'user_details/:id/:name', component: UserDetailsComponent },
+  { path: 'user_details/:id/:name/:type', component: UserDetailsComponent },
   { path: 'sale_details/:id', component: SaleDetailsComponent },
   { path: 'category_products/:id/:name', component: ProductsComponent },
   { path: 'pos/invoice/:id', component: InvoiceComponent },
+  { path: 'dashboard_details/:key/:page_title', component: DashboardDetailsComponent },
+  { path: 'operation_transactions/:id/:name/:type', component: OperationTransactionsComponent },
 ];
 
 

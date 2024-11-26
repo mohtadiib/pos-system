@@ -39,6 +39,12 @@ import { ItemsTableComponent } from '../invoice/items-table/items-table.componen
 import { DownloadBtnComponent } from '../invoice/download-btn/download-btn.component';
 import { PdfReportsComponent } from './pdf-reports/pdf-reports.component';
 import { BackBtnComponent } from '../back-btn/back-btn.component';
+import { DashboardDetailsComponent } from 'src/app/pages/dashboard/dashboard-details/dashboard-details.component';
+import { ReportTableDataComponent } from 'src/app/pages/dashboard/dashboard-details/report-table-data/report-table-data.component';
+import { PaymentComponent } from 'src/app/pages/sale-details/payment/payment.component';
+import { NzResultModule } from 'ng-zorro-antd/result';
+import { OperationTransactionsComponent } from 'src/app/pages/operation-transactions/operation-transactions.component';
+import { UserWalletComponent } from 'src/app/pages/user-details/user-wallet/user-wallet.component';
 
 @NgModule({
     imports: [
@@ -62,7 +68,8 @@ import { BackBtnComponent } from '../back-btn/back-btn.component';
         NzFormModule,
         NzPaginationModule,
         NzInputNumberModule,
-        NzSwitchModule
+        NzSwitchModule,
+        NzResultModule
     ],
   declarations: [
     TableDataComponent,
@@ -84,7 +91,12 @@ import { BackBtnComponent } from '../back-btn/back-btn.component';
     ItemsTableComponent,
     DownloadBtnComponent,
     PdfReportsComponent,
-    BackBtnComponent
+    BackBtnComponent,
+    DashboardDetailsComponent,
+    ReportTableDataComponent,
+    PaymentComponent,
+    OperationTransactionsComponent,
+    UserWalletComponent
   ],
   exports: [
     TableDataComponent,

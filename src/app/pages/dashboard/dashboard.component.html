@@ -8,16 +8,16 @@
     <br />
   </div>
   <div class="cards">
-    <div (click)="setFilter(body.dashboard[i].table,body.dashboard[i].where,i)" class="card2" *ngFor="let table of tables.values; let i = index">
+    <div (click)="selectCard(table)" class="card2" *ngFor="let table of tables.values; let i = index">
       <div>
         <div>
           {{table.total?priceFormat(table.total):table.count}}
         </div>
         <div>
-          {{body.dashboard[i].title}}
+          {{table.title}}
         </div>
       </div>
-      <span nz-icon [nzType]="body.dashboard[i].icon"></span>
+      <span nz-icon [nzType]="table.icon"></span>
     </div>
   </div>
   <br>
@@ -25,3 +25,4 @@
     <app-table-data [inputTableData]="reportObject" [pageTitle]="pageTitle"/>
   </div>
 </div>
+<router-outlet></router-outlet>
